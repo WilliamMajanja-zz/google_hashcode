@@ -150,7 +150,7 @@ public:
           vector<vector<int>> current_cut(R, vector<int>(C, -1));
           LOG("n = " << n << ", m = " << m);
           int current_score = get_best_solution(R, C, L, H, pizza, n, m, current_cut);
-          LOG("score = " << current_score);
+          LOG("score = " << current_score << ", best score = " << best_score);
           if (best_score < current_score) {
             best_score = current_score;
             best_cut = std::move(current_cut);
