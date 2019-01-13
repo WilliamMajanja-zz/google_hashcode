@@ -6,5 +6,10 @@ fi
 
 mkdir solutions/$1
 cp templates/* solutions/$1/
-sed -i -e "s/<<test_name>>/$1/g" solutions/$1/*
-sed -i -e "s/<<TestName>>/$2/g" solutions/$1/*
+if [[ "$OSTYPE" == "darwin" ]]; then
+  sed -i '' -e "s/<<test_name>>/$1/g" solutions/$1/*
+  sed -i '' -e "s/<<TestName>>/$2/g" solutions/$1/*
+else
+  sed -i -e "s/<<test_name>>/$1/g" solutions/$1/*
+  sed -i -e "s/<<TestName>>/$2/g" solutions/$1/*
+fi
