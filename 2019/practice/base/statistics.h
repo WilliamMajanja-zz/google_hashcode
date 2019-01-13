@@ -47,7 +47,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
       LOG("slice corners: " << ax << ' ' << ay << ' ' << bx << ' ' << by)
       return 0;
     }
-    if (tcnt + mcnt < input.H) {
+    if (tcnt + mcnt > input.H) {
       LOG("exceeds the maximum number of cells in a slice: " << mcnt + tcnt)
       LOG("slice number: " << q)
       LOG("slice corners: " << ax << ' ' << ay << ' ' << bx << ' ' << by)
