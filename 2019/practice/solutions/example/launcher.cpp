@@ -9,7 +9,7 @@ int main() {
   while (improving_result.Y) {
     improving_result = Improver::improve(sol.input(), move(improving_result.X));
   }
-  print_output(improving_result.X);
   auto score = calculate_score(sol.input(), improving_result.X);
-  LOG("example score: " << score)
+  LOG("example score: " << score);
+  print_output(improving_result.X, "../../output/example/" + to_string(score));
 }
