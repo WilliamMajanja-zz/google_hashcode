@@ -21,6 +21,10 @@ struct Input {
   vector<Ride> rides;
 };
 
+struct Output {
+  vector<int> routes;
+};
+
 inline Input read_input(const std::string& fname) {
   ifstream in_f(fname);
   Input in;
@@ -29,7 +33,7 @@ inline Input read_input(const std::string& fname) {
   for (auto& ride : in.rides) {
     in_f >> ride.st.X >> ride.st.Y >> ride.fin.X >> ride.fin.Y >> ride.ranges.X >> ride.ranges.Y;
   }
-  LOG("rides count: " << in.rides.size());
+  LOG("rides count: " << in.rides.size())
   return in;
 }
 
@@ -44,7 +48,7 @@ public:
   void print_answer(const std::string& fname = "output.txt") {
     fstream out_f(fname, fstream::out);
     out_f << "answer";
-    LOG("answer has been printed to file: " << fname);
+    LOG("answer has been printed to file: " << fname)
   }
 
   virtual void solve() {};
