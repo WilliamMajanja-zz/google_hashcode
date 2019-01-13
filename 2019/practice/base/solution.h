@@ -10,8 +10,8 @@ public:
   Solution(Input&& input):
     input_(move(input)) {}
 
-  auto input() const { return input_; }
-  auto output() const { return output_; }
+  const auto& input() const { return input_; }
+  auto& output() { return output_; }
 
   void solve() {
     LOG("start solving")
