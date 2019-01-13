@@ -5,14 +5,18 @@
   auto new_score = calculate_score(input, output, /*enable_logging =*/ false);\
   if (new_score > old_score) {\
     LOG("improved result: " << old_score << " -> " << new_score)\
-    return {output, true};\
+    old_score = new_score;\
+    result_improved = true;\
+    continue;\
   }\
   qwe--;\
   qwe--;\
   new_score = calculate_score(input, output, /*enable_logging =*/ false);\
   if (new_score > old_score) {\
     LOG("improved result: " << old_score << " -> " << new_score)\
-    return {output, true};\
+    old_score = new_score;\
+    result_improved = true;\
+    continue;\
   }\
   sls[i] = old_sl;\
 }
@@ -36,6 +40,7 @@ public:
 
     auto old_score = calculate_score(input, output, /*enable_logging =*/ false); 
 
+    bool result_improved = false;
     for (auto i : permutation) {
       auto old_sl = sls[i];
       PROCESS_CASE(sls[i].st.X)
@@ -43,7 +48,10 @@ public:
       PROCESS_CASE(sls[i].fin.X)
       PROCESS_CASE(sls[i].fin.Y)
     }
-    return {output, false};
+    if (!result_improved) {
+      LOG("cannot improve result: " << old_score)
+    }
+    return {output, result_improved};\
   }
 
 private:
