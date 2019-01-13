@@ -25,8 +25,6 @@ public:
     if (cut[cur_i][cur_j] == -1) {
       for (int len_i = 1; len_i <= H && cur_i + len_i <= end_i; ++len_i) {
         for (int len_j = (2 * L + len_i - 1) / len_i; cur_j + len_j <= end_j && len_i * len_j <= H; ++len_j) {
-          assert(len_i * len_j >= 2 * L);
-
           int cnt_mushrooms = 0;
           int cnt_tomatos = 0;
           bool can_place = true;
