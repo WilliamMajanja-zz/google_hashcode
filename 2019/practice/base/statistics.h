@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-int calculate_score(const Input& input, const Output& output) {
+int calculate_score(const Input& input, const Output& output, bool enable_logging = true) {
   int score = 0;
   vector<vector<bool>> qwe(input.R, vector<bool>(input.C, false));
   for (int q = 0; q < output.sls.size(); ++q) {

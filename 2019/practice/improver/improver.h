@@ -2,14 +2,14 @@
 
 #define PROCESS_CASE(qwe) {\
   qwe++;\
-  auto new_score = calculate_score(input, output);\
+  auto new_score = calculate_score(input, output, /*enable_logging =*/ false);\
   if (new_score > old_score) {\
     LOG("improved result: " << old_score << " -> " << new_score)\
     return {output, true};\
   }\
   qwe--;\
   qwe--;\
-  new_score = calculate_score(input, output);\
+  new_score = calculate_score(input, output, /*enable_logging =*/ false);\
   if (new_score > old_score) {\
     LOG("improved result: " << old_score << " -> " << new_score)\
     return {output, true};\
@@ -34,7 +34,7 @@ public:
     }
     random_shuffle(permutation.begin(), permutation.end());
 
-    auto old_score = calculate_score(input, output); 
+    auto old_score = calculate_score(input, output, /*enable_logging =*/ false); 
 
     for (auto i : permutation) {
       auto old_sl = sls[i];
