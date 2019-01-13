@@ -41,8 +41,14 @@ public:
   Solution(Input&& input):
     input_(move(input)) {}
 
-private:
-  void finish() { }
+  void print_answer(const std::string& fname = "output.txt") {
+    fstream out_f(fname, fstream::out);
+    out_f << "answer";
+    LOG("answer has been printed to file: " << fname);
+  }
 
+  virtual void solve() {};
+
+private:
   Input input_;
 };
