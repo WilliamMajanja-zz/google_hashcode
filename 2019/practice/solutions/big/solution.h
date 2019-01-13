@@ -25,6 +25,8 @@ public:
     if (cut[cur_i][cur_j] == -1) {
       for (int len_i = 1; len_i <= H && cur_i + len_i <= end_i; ++len_i) {
         for (int len_j = (2 * L + len_i - 1) / len_i; cur_j + len_j <= end_j && len_i * len_j <= H; ++len_j) {
+          assert(len_i * len_j >= 2 * L);
+
           int cnt_mushrooms = 0;
           int cnt_tomatos = 0;
           bool can_place = true;
@@ -150,11 +152,11 @@ public:
           vector<vector<int>> current_cut(R, vector<int>(C, -1));
           LOG("n = " << n << ", m = " << m);
           int current_score = get_best_solution(R, C, L, H, pizza, n, m, current_cut);
-          LOG("score = " << current_score << ", best score = " << best_score);
           if (best_score < current_score) {
             best_score = current_score;
             best_cut = std::move(current_cut);
           }
+          LOG("score = " << current_score << ", best score = " << best_score);
         }
       }
     }
