@@ -31,5 +31,6 @@ protected:
   Input input_;
   Output output_;
 
-  string class_name_ = "Solution";
+private:
+  const string class_name_ = "Solution";
 };

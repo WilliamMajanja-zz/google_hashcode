@@ -11,5 +11,10 @@ public:
     auto& routes = output_.routes;
     routes.emplace_back(vector<int>{0});
     routes.emplace_back(vector<int>{2, 1});
+    LOG("kekes")
   }
+
+private:
+  const string class_name_ = "ExampleSolution";
 };
+
