@@ -15,6 +15,7 @@
 using namespace std;
 
 string class_name_;
+bool enable_logging = true;
 
 struct Input {
   int R, C, L, H;

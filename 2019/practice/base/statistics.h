@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-int calculate_score(const Input& input, const Output& output) {
+int calculate_score(const Input& input, const Output& output, bool enable_logging = true) {
   int score = 0;
   vector<vector<bool>> qwe(input.R, vector<bool>(input.C, false));
   for (int q = 0; q < output.sls.size(); ++q) {
@@ -35,14 +35,20 @@ int calculate_score(const Input& input, const Output& output) {
           ++mcnt;
       }
     }
-    if (tcnt < input.L || input.H < tcnt) {
-      LOG("wrong number of T: " << tcnt)
+    if (tcnt < input.L) {
+      LOG("too small number of T: " << tcnt)
       LOG("slice number: " << q)
       LOG("slice corners: " << ax << ' ' << ay << ' ' << bx << ' ' << by)
       return 0;
     }
-    if (mcnt < input.L || input.H < mcnt) {
-      LOG("wrong number of M: " << mcnt)
+    if (mcnt < input.L) {
+      LOG("too small number of M: " << mcnt)
+      LOG("slice number: " << q)
+      LOG("slice corners: " << ax << ' ' << ay << ' ' << bx << ' ' << by)
+      return 0;
+    }
+    if (tcnt + mcnt > input.H) {
+      LOG("exceeds the maximum number of cells in a slice: " << mcnt + tcnt)
       LOG("slice number: " << q)
       LOG("slice corners: " << ax << ' ' << ay << ' ' << bx << ' ' << by)
       return 0;
