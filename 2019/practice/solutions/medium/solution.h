@@ -105,21 +105,25 @@ public:
 
   Output get_answer(int R, int C, const vector<vector<int>>& cut) const {
     int num_slices = 0;
-    for (int i = 0; i < R; ++i) {
-      for (int j = 0; j < C; ++j) {
-        num_slices = std::max(num_slices, cut[i][j] + 1);
+    if (!cut.empty()) {
+      for (int i = 0; i < R; ++i) {
+        for (int j = 0; j < C; ++j) {
+          num_slices = std::max(num_slices, cut[i][j] + 1);
+        }
       }
     }
 
     Output result{vector<Slice>(num_slices, {{R, C}, {-1, -1}})};
-    for (int i = 0; i < R; ++i) {
-      for (int j = 0; j < C; ++j) {
-        if (cut[i][j] != -1) {
-          Slice& b = result.sls[cut[i][j]];
-          b.st.X = std::min(b.st.X, i);
-          b.st.Y = std::min(b.st.Y, j);
-          b.fin.X = std::max(b.fin.X, i);
-          b.fin.Y = std::max(b.fin.Y, j);
+    if (!cut.empty()) {
+      for (int i = 0; i < R; ++i) {
+        for (int j = 0; j < C; ++j) {
+          if (cut[i][j] != -1) {
+            Slice& b = result.sls[cut[i][j]];
+            b.st.X = std::min(b.st.X, i);
+            b.st.Y = std::min(b.st.Y, j);
+            b.fin.X = std::max(b.fin.X, i);
+            b.fin.Y = std::max(b.fin.Y, j);
+          }
         }
       }
     }
