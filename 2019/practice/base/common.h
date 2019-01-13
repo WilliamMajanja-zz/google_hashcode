@@ -14,16 +14,26 @@ using namespace std;
 string class_name_;
 
 struct Input {
-  /* input structure here */
+  int R, C, L, H;
+  vector<vector<char>> pizza;
+};
+
+struct Slice {
+  PT st, fin;
 };
 
 struct Output {
-  /* output structure here */
+  vector<Slice> sls;
 };
 
 inline Input read_input(const std::string& fname) {
   ifstream in_f(fname);
   Input in;
-  /* read input here */
+  in_f >> in.R >> in.C >> in.L >> in.H;
+  in.pizza.assign(in.R, vector<char>(in.C));
+  for (auto& row : in.pizza)
+    for (auto& cell : row)
+      in_f >> cell;
+  LOG("have read pizza: " << in.R << 'x' << in.C)
   return in;
 }
