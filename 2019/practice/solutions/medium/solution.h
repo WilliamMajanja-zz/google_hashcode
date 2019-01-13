@@ -136,7 +136,7 @@ public:
     int best_score = 0;
     vector<vector<int>> best_cut;
 
-    for (int mult = 2; mult <= 10; ++mult) {
+    for (int mult = 2; mult <= 50; ++mult) {
       for (int n = 1; n <= mult; ++n) {
         if (R % n != 0) {
           continue;
