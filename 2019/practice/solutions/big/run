@@ -1,0 +1,3 @@
+#!/bin/bash -e
+g++ launcher.cpp 
+time ./a.out
