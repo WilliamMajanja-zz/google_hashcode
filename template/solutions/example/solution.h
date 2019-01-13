@@ -5,12 +5,9 @@
 class ExampleSolution : public Solution {
 public:
   ExampleSolution():
-    Solution("../../input/a_example.in") {}
+    Solution("../../input/input.txt") {}
 
   void solve_internal() override {
-    output_.sls.push_back(Slice(make_pair(0, 0), make_pair(2, 1)));
-    output_.sls.push_back(Slice(make_pair(0, 2), make_pair(2, 1)));
-    output_.sls.push_back(Slice(make_pair(0, 3), make_pair(2, 3)));
     LOG("called")
   }
 
