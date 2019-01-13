@@ -99,8 +99,8 @@ public:
       }
     }
 
-    n = std::max(1, std::min(n, 3));
-    m = std::max(1, std::min(m, 3));
+    n = std::max(1, std::min(n - 1, 7));
+    m = std::max(1, std::min(m - 1, 7));
     for (int block_i = 0; block_i < R / n; ++block_i) {
       for (int block_j = 0; block_j < C / m; ++block_j) {
         auto [add_score, num_new] = get_best_solution(L, H, pizza, n, m, block_i, block_j, cut, cut_id);
