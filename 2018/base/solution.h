@@ -1,41 +1,6 @@
 #pragma once
 
-#include "log.h"
-#include <iostream>
-#include <vector>
-#include <fstream>
-
-#define X first
-#define Y second
-
-using namespace std;
-
-struct Ride {
-  pair<int, int> st;
-  pair<int, int> fin;
-  pair<int, int> ranges;
-};
-
-struct Input {
-  int R, C, F, N, B, T;
-  vector<Ride> rides;
-};
-
-struct Output {
-  vector<int> routes;
-};
-
-inline Input read_input(const std::string& fname) {
-  ifstream in_f(fname);
-  Input in;
-  in_f >> in.R >> in.C >> in.F >> in.N >> in.B >> in.T;
-  in.rides.resize(in.N);
-  for (auto& ride : in.rides) {
-    in_f >> ride.st.X >> ride.st.Y >> ride.fin.X >> ride.fin.Y >> ride.ranges.X >> ride.ranges.Y;
-  }
-  LOG("rides count: " << in.rides.size())
-  return in;
-}
+#include "common.h"
 
 class Solution {
 public:
@@ -45,14 +10,27 @@ public:
   Solution(Input&& input):
     input_(move(input)) {}
 
-  void print_answer(const std::string& fname = "output.txt") {
-    fstream out_f(fname, fstream::out);
-    out_f << "answer";
-    LOG("answer has been printed to file: " << fname)
+  auto input() const { return input_; }
+  auto output() const { return output_; }
+
+  void solve() {
+    LOG("start solving")
+    solve_internal();
+    LOG("finish solving")
   }
 
-  virtual void solve() {};
+  void print_output(const std::string& fname = "output.txt") {
+    fstream out_f(fname, fstream::out);
+    out_f << "output";
+    LOG("output has been printed to file: " << fname)
+  }
+
+protected:
+  virtual void solve_internal() {}
 
 private:
   Input input_;
+  Output output_;
+
+  const string class_name_ = "Solution";
 };
