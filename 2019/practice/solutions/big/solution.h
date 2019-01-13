@@ -7,17 +7,17 @@ public:
   BigSolution():
     Solution("../../input/d_big.in") {}
 
-  int ggo(int cur_i, int cur_j, int end_i, int end_j, int L, int H, const vector<vector<char>>& pizza, vector<vector<int>>& cut, int cut_id) const {
+  int ggo(int cur_i, int cur_j, int start_i, int start_j, int end_i, int end_j, int L, int H, const vector<vector<char>>& pizza, vector<vector<int>>& cut, int cut_id) const {
     if (cur_i + 1 < end_i) {
-      return go(cur_i + 1, cur_j, end_i, end_j, L, H, pizza, cut, cut_id);
+      return go(cur_i + 1, cur_j, start_i, start_j, end_i, end_j, L, H, pizza, cut, cut_id);
     } else if (cur_j + 1 < end_j) {
-      return go(cur_i, cur_j + 1, end_i, end_j, L, H, pizza, cut, cut_id);
+      return go(start_i, cur_j + 1, start_i, start_j, end_i, end_j, L, H, pizza, cut, cut_id);
     } else {
       return 0;
     }
   }
 
-  int go(int cur_i, int cur_j, int end_i, int end_j, int L, int H, const vector<vector<char>>& pizza, vector<vector<int>>& cut, int cut_id) const {
+  int go(int cur_i, int cur_j, int start_i, int start_j, int end_i, int end_j, int L, int H, const vector<vector<char>>& pizza, vector<vector<int>>& cut, int cut_id) const {
     int best_score = 0;
     int best_len_i = 0;
     int best_len_j = 0;
@@ -52,7 +52,7 @@ public:
                 new_cut[i][j] = cut_id;
               }
             }
-            int current_score = ggo(cur_i, cur_j, end_i, end_j, L, H, pizza, new_cut, cut_id + 1) + len_i * len_j;
+            int current_score = ggo(cur_i, cur_j, start_i, start_j, end_i, end_j, L, H, pizza, new_cut, cut_id + 1) + len_i * len_j;
             if (best_score < current_score) {
               best_score = current_score;
               best_len_i = len_i;
@@ -64,7 +64,7 @@ public:
       }
     }
     if (best_score == 0) {
-      return ggo(cur_i, cur_j, end_i, end_j, L, H, pizza, cut, cut_id);
+      return ggo(cur_i, cur_j, start_i, start_j, end_i, end_j, L, H, pizza, cut, cut_id);
     } else {
       cut = std::move(best_cut);
       return best_score;
@@ -76,11 +76,11 @@ public:
     int start_j = block_j * m;
     int end_i = start_i + n;
     int end_j = start_j + m;
-    int score = go(start_i, start_j, end_i, end_j, L, H, pizza, cut, cut_id);
+    int score = go(start_i, start_j, start_i, start_j, end_i, end_j, L, H, pizza, cut, cut_id);
     int num_new = 0;
     for (int i = start_i; i < end_i; ++i) {
       for (int j = start_j; j < end_j; ++j) {
-        if (cut[i][j] != -1) {
+        if (cut[i][j] >= cut_id) {
           num_new = std::max(num_new, cut[i][j] - cut_id + 1);
         }
       }
@@ -98,6 +98,7 @@ public:
         cut_id += num_new;
       }
     }
+
     return score;
   }
 
@@ -138,7 +139,7 @@ public:
     int best_score = 0;
     vector<vector<int>> best_cut;
 
-    for (int mult = 2; mult <= 50; ++mult) {
+    for (int mult = 5; mult <= 50; ++mult) {
       for (int n = 1; n <= mult; ++n) {
         if (R % n != 0) {
           continue;
