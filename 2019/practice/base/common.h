@@ -4,6 +4,9 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <filesystem>
+#include <algorithm>
+#include <random>
 
 #define X first
 #define Y second
