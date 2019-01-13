@@ -6,6 +6,7 @@
 #include <fstream>
 #include <algorithm>
 #include <random>
+#include <cassert>
 
 #define X first
 #define Y second
