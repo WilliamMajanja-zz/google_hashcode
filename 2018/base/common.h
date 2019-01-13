@@ -25,7 +25,7 @@ struct Input {
 };
 
 struct Output {
-  vector<int> routes;
+  vector<vector<int>> routes;
 };
 
 inline Input read_input(const std::string& fname) {

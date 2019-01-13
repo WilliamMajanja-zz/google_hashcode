@@ -15,18 +15,19 @@ int calculate_score(const Input& input, const Output& output) {
       int len_score = 0;
       int bon = 0;
       t += dist(now, input.rides[x].st);
-      tnext = t + dist(input.rides[x].st, input.rides[x].fin);
+      int tnext = t + dist(input.rides[x].st, input.rides[x].fin);
       if (tnext <= input.rides[x].ranges.Y) {
-        nowscore += tnext - t;
+        len_score += tnext - t;
       } else {
         continue;
       }
       if (t <= input.rides[x].ranges.X) {
-        nowbon += input.b;
+        bon += input.B;
       }
       LOG("ride: " << x + 1 << " len_score: " << len_score << " bon: " << bon)
       score += len_score + bon;
     }
   }
   LOG("total score: " << score)
+  return score;
 }

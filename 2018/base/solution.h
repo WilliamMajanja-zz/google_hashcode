@@ -28,9 +28,8 @@ public:
 protected:
   virtual void solve_internal() {}
 
-private:
   Input input_;
   Output output_;
 
-  const string class_name_ = "Solution";
+  string class_name_ = "Solution";
 };
