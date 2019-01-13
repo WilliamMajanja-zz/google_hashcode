@@ -138,13 +138,13 @@ public:
     int best_score = 0;
     vector<vector<int>> best_cut;
 
-    for (int mult = 2; mult <= 50; ++mult) {
-      for (int n = 1; n <= mult; ++n) {
+    for (int mult = 2; mult < 3; ++mult) {
+      for (int n = 1; n < 2; ++n) {
         if (R % n != 0) {
           continue;
         }
 
-        for (int m = std::max(0, (mult - 1) / n) + 1; m <= std::max(1, mult / n); ++m) {
+        for (int m = 40; m < 41; ++m) {
           if (C % m != 0) {
             continue;
           }
