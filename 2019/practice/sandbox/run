@@ -1,0 +1,3 @@
+#!/bin/bash -e
+g++ sol.cpp 
+time ./a.out
