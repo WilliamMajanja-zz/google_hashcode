@@ -2,9 +2,9 @@
 
 #include "../../base/solution.h"
 
-class ExampleSolution : public Solution {
+class <<TestName>>Solution : public Solution {
 public:
-  ExampleSolution():
+  <<TestName>>Solution():
     Solution(/* path to test: "../../input/<filename>.in"*/) {}
 
   void solve_internal() override {
@@ -12,6 +12,6 @@ public:
   }
 
 private:
-  const string class_name_ = "ExampleSolution";
+  const string class_name_ = "<<TestName>>Solution";
 };
 
