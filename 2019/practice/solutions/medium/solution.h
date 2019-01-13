@@ -73,19 +73,31 @@ public:
     }
   }
 
-  int get_best_solution(int L, int H, const vector<vector<char>>& pizza, int n, int m, int block_i, int block_j, vector<vector<int>>& cut) const {
+  std::pair<int, int> get_best_solution(int L, int H, const vector<vector<char>>& pizza, int n, int m, int block_i, int block_j, vector<vector<int>>& cut, int cut_id) const {
     int start_i = block_i * n;
     int start_j = block_j * m;
     int end_i = start_i + n;
     int end_j = start_j + m;
-    return go(start_i, start_j, end_i, end_j, L, H, pizza, cut, 0);
+    int score = go(start_i, start_j, end_i, end_j, L, H, pizza, cut, cut_id);
+    int num_new = 0;
+    for (int i = start_i; i < end_i; ++i) {
+      for (int j = start_j; j < end_j; ++j) {
+        if (cut[i][j] != -1) {
+          num_new = std::max(num_new, cut[i][j] - cut_id + 1);
+        }
+      }
+    }
+    return {score, num_new};
   }
 
   int get_best_solution(int R, int C, int L, int H, const vector<vector<char>>& pizza, int n, int m, vector<vector<int>>& cut) const {
     int score = 0;
+    int cut_id = 0;
     for (int block_i = 0; block_i < R / n; ++block_i) {
       for (int block_j = 0; block_j < C / m; ++block_j) {
-        score += get_best_solution(L, H, pizza, n, m, block_i, block_j, cut);
+        auto [add_score, num_new] = get_best_solution(L, H, pizza, n, m, block_i, block_j, cut, cut_id);
+        score += add_score;
+        cut_id += num_new;
       }
     }
     return score;
@@ -96,9 +108,7 @@ public:
     for (int i = 0; i < R; ++i) {
       for (int j = 0; j < C; ++j) {
         num_slices = std::max(num_slices, cut[i][j] + 1);
-        std::cerr << cut[i][j] << " ";
       }
-      std::cerr << '\n';
     }
 
     Output result{vector<Slice>(num_slices, {{R, C}, {-1, -1}})};
