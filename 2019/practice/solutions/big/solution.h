@@ -149,7 +149,7 @@ public:
     int best_score = 0;
     vector<vector<int>> best_cut;
 
-    for (int mult = 5; mult <= 50; ++mult) {
+    for (int mult = 40; mult <= 50; ++mult) {
       for (int n = 1; n <= mult; ++n) {
         if (R % n != 0) {
           continue;
@@ -168,6 +168,8 @@ public:
             best_cut = std::move(current_cut);
           }
           LOG("score = " << current_score << ", best score = " << best_score);
+          output() = get_answer(R, C, current_cut);
+          print_output(to_string(current_score));
         }
       }
     }
