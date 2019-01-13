@@ -20,6 +20,7 @@ struct Input {
 
 struct Slice {
   PT st, fin;
+  Slice(PT a, PT b): st(a), fin(b) {}
 };
 
 struct Output {
