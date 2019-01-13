@@ -2,12 +2,16 @@
 
 #define PROCESS_CASE(qwe) {\
   qwe++;\
-  if (calculate_score(input, output) > old_score) {\
+  auto new_score = calculate_score(input, output);\
+  if (new_score > old_score) {\
+    LOG("improved result: " << old_score << " -> " << new_score)\
     return {output, true};\
   }\
   qwe--;\
   qwe--;\
-  if (calculate_score(input, output) > old_score) {\
+  new_score = calculate_score(input, output);\
+  if (new_score > old_score) {\
+    LOG("improved result: " << old_score << " -> " << new_score)\
     return {output, true};\
   }\
   sls[i] = old_sl;\
@@ -21,6 +25,8 @@ public:
   void run() { }
 
   static pair<Output, bool> improve(const Input& input, Output output) {
+    const string class_name_ = "Improver";
+
     auto& sls = output.sls;
     vector<int> permutation;
     for (int i = 0; i < sls.size(); ++i) {
@@ -41,4 +47,5 @@ public:
   }
 
 private:
+  const string class_name_ = "Improver";
 };

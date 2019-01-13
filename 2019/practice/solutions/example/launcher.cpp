@@ -5,8 +5,11 @@
 int main() {
   ExampleSolution sol;
   sol.solve();
-  sol.print_output();
-  auto improved_output = Improver::improve(sol.input(), sol.output()).X;
-  auto score = calculate_score(sol.input(), improved_output);
+  auto improving_result = Improver::improve(sol.input(), sol.output());
+  while (improving_result.Y) {
+    improving_result = Improver::improve(sol.input(), move(improving_result.X));
+  }
+  print_output(improving_result.X);
+  auto score = calculate_score(sol.input(), improving_result.X);
   LOG("example score: " << score)
 }

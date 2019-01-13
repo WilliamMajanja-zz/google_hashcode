@@ -41,3 +41,13 @@ inline Input read_input(const std::string& fname) {
   LOG("have read pizza: " << in.R << 'x' << in.C)
   return in;
 }
+
+inline void print_output(const Output& output, const std::string& fname = "output.txt") {
+  fstream out_f(fname, fstream::out);
+  const auto& sls = output.sls;
+  out_f << sls.size() << std::endl;
+  for (const auto& sl : sls) {
+    out_f << sl.st.X << ' ' << sl.st.Y << ' ' << sl.fin.X << ' ' << sl.fin.Y << endl;
+  }
+  LOG("output has been printed to file: " << fname)
+}
