@@ -4,6 +4,8 @@ if [ "$#" -ne 2 ]; then
     exit
 fi
 
+mkdir output/$1
+
 mkdir solutions/$1
 cp templates/* solutions/$1/
 if [[ "$OSTYPE" == "darwin"* ]]; then

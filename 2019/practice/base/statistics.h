@@ -16,36 +16,36 @@ int calculate_score(const Input& input, const Output& output) {
       swap(ay, by);
     for (int i = ax; i < bx + 1; ++i) {
       for (int j = ay; j < by + 1; ++j) {
+        if (ax < 0 || ay < 0 || bx >= input.R || by >= input.C) {
+          LOG("out of border: " << i << ' ' << j)
+          LOG("slice number: " << q)
+          LOG("slice corners: " << ax << ' ' << ay << ' ' << bx << ' ' << by)
+          return 0;
+        }
         if (qwe[i][j]) {
           LOG("already used cell: " << i << ' ' << j)
           LOG("slice number: " << q)
           LOG("slice corners: " << ax << ' ' << ay << ' ' << bx << ' ' << by)
-          exit(1);
+          return 0;
         }
         qwe[i][j] = 1;
         if (input.pizza[i][j] == 'T')
           ++tcnt;
         else if (input.pizza[i][j] == 'M')
           ++mcnt;
-        else {
-          LOG("out of border: " << i << ' ' << j)
-          LOG("slice number: " << q)
-          LOG("slice corners: " << ax << ' ' << ay << ' ' << bx << ' ' << by)
-          exit(1);
-        }
       }
     }
     if (tcnt < input.L || input.H < tcnt) {
       LOG("wrong number of T: " << tcnt)
       LOG("slice number: " << q)
       LOG("slice corners: " << ax << ' ' << ay << ' ' << bx << ' ' << by)
-      exit(1);
+      return 0;
     }
     if (mcnt < input.L || input.H < mcnt) {
       LOG("wrong number of M: " << mcnt)
       LOG("slice number: " << q)
       LOG("slice corners: " << ax << ' ' << ay << ' ' << bx << ' ' << by)
-      exit(1);
+      return 0;
     }
   }
   for (const auto& row : qwe)

@@ -10,8 +10,8 @@ public:
   Solution(Input&& input):
     input_(move(input)) {}
 
-  auto input() const { return input_; }
-  auto output() const { return output_; }
+  const auto& input() const { return input_; }
+  const auto& output() { return output_; }
 
   void solve() {
     LOG("start solving")
@@ -20,9 +20,7 @@ public:
   }
 
   void print_output(const std::string& fname = "output.txt") {
-    fstream out_f(fname, fstream::out);
-    /* print output here */
-    LOG("output has been printed to file: " << fname)
+    ::print_output(output_, fname);
   }
 
 protected:

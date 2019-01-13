@@ -5,7 +5,7 @@
 class ExampleSolution : public Solution {
 public:
   ExampleSolution():
-    Solution("../../input/a_example.in") {}
+    Solution("../../input/input.txt") {}
 
   void solve_internal() override {
     LOG("called")
