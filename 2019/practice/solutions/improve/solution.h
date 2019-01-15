@@ -1,11 +1,12 @@
 #pragma once
 
-#include "../../base/solution.h"
+#include "../../base/async_solution.h"
 
-class BigSolution : public Solution {
+class ImproveSolution : public AsyncSolution {
 public:
-  BigSolution():
-    Solution("../../input/d_big.in") {}
+  template <typename... T>
+  ImproveSolution(T&&... args):
+      AsyncSolution(std::forward<T>(args)...) {}
 
   int ggo(int cur_i, int cur_j, int start_i, int start_j, int end_i, int end_j, int L, int H, const vector<vector<char>>& pizza, vector<vector<int>>& cut, int cut_id) const {
     if (cur_i + 1 < end_i) {
@@ -99,8 +100,8 @@ public:
       }
     }
 
-    n = std::max(1, std::min(n - 1, 7));
-    m = std::max(1, std::min(m - 1, 7));
+    n = std::max(1, std::min(n, 3));
+    m = std::max(1, std::min(m, 3));
     for (int block_i = 0; block_i < R / n; ++block_i) {
       for (int block_j = 0; block_j < C / m; ++block_j) {
         auto [add_score, num_new] = get_best_solution(L, H, pizza, n, m, block_i, block_j, cut, cut_id);
@@ -123,6 +124,7 @@ public:
     }
 
     Output result{vector<Slice>(num_slices, {{R, C}, {-1, -1}})};
+    result.pointer = input().pointer;
     if (!cut.empty()) {
       for (int i = 0; i < R; ++i) {
         for (int j = 0; j < C; ++j) {
@@ -149,35 +151,33 @@ public:
     int best_score = 0;
     vector<vector<int>> best_cut;
 
-    for (int mult = 50; mult < 51; ++mult) {
-      for (int n = 25; n < 26; ++n) {
+    for (int mult = 5; mult <= 50; ++mult) {
+      for (int n = 1; n <= mult; ++n) {
         if (R % n != 0) {
           continue;
         }
 
-        for (int m = 2; m < 3; ++m) {
+        for (int m = std::max(0, (mult - 1) / n) + 1; m <= std::max(1, mult / n); ++m) {
           if (C % m != 0) {
             continue;
           }
 
           vector<vector<int>> current_cut(R, vector<int>(C, -1));
-          LOG("n = " << n << ", m = " << m);
+          //LOG("n = " << n << ", m = " << m);
           int current_score = get_best_solution(R, C, L, H, pizza, n, m, current_cut);
           if (best_score < current_score) {
             best_score = current_score;
             best_cut = std::move(current_cut);
           }
-          LOG("score = " << current_score << ", best score = " << best_score);
-          output() = get_answer(R, C, current_cut);
-          print_output(to_string(current_score));
+          //LOG("score = " << current_score << ", best score = " << best_score);
         }
       }
     }
 
-    output() = get_answer(R, C, best_cut);
+    output_ = get_answer(R, C, best_cut);
   }
 
 private:
-  const string class_name_ = "BigSolution";
+  const string class_name_ = "ImproveSolution";
 };
 

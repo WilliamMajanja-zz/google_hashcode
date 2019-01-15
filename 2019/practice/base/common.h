@@ -1,12 +1,16 @@
+#define MAX_SOLVING_THREAD_COUNT 18
 #pragma once
 
 #include "log.h"
-#include <iostream>
-#include <vector>
-#include <fstream>
 #include <algorithm>
-#include <random>
+#include <atomic>
 #include <cassert>
+#include <fstream>
+#include <iostream>
+#include <memory>
+#include <random>
+#include <thread>
+#include <vector>
 
 #define X first
 #define Y second
@@ -20,6 +24,7 @@ bool enable_logging = true;
 struct Input {
   int R, C, L, H;
   vector<vector<char>> pizza;
+  PT pointer;
 };
 
 struct Slice {
@@ -29,6 +34,7 @@ struct Slice {
 
 struct Output {
   vector<Slice> sls;
+  PT pointer;
 };
 
 inline Input read_input(const std::string& fname) {
@@ -43,7 +49,8 @@ inline Input read_input(const std::string& fname) {
   return in;
 }
 
-inline void print_output(const Output& output, const std::string& fname = "output.txt") {
+inline void print_output(const Output& output, size_t score, const std::string& fpath = "./") {
+  auto fname = fpath + to_string(score) + ".ans";
   fstream out_f(fname, fstream::out);
   const auto& sls = output.sls;
   out_f << sls.size() << std::endl;
