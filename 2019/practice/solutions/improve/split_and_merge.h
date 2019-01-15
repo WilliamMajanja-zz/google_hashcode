@@ -6,7 +6,7 @@ public:
     const string class_name_ = "ImproveSpliteAndMerge";
     vector<Input> result{};
 
-    const int kLen = 45;
+    const int kLen = 200;
     for (int i = 0; i < input.R; i += kLen) {
       for (int j = 0; j < input.C; j += kLen) {
         int ii = min(i + kLen, input.R);

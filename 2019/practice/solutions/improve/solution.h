@@ -6,7 +6,9 @@ class ImproveSolution : public AsyncSolution {
 public:
   template <typename... T>
   ImproveSolution(T&&... args):
-      AsyncSolution(std::forward<T>(args)...) {}
+      AsyncSolution(std::forward<T>(args)...) {
+    clog = ofstream("logs/" + to_string(number()) + ".log");
+  }
 
   int ggo(int cur_i, int cur_j, int start_i, int start_j, int end_i, int end_j, int L, int H, const vector<vector<char>>& pizza, vector<vector<int>>& cut, int cut_id) const {
     if (cur_i + 1 < end_i) {
@@ -163,13 +165,13 @@ public:
           }
 
           vector<vector<int>> current_cut(R, vector<int>(C, -1));
-          //LOG("n = " << n << ", m = " << m);
+          LOG("n = " << n << ", m = " << m);
           int current_score = get_best_solution(R, C, L, H, pizza, n, m, current_cut);
           if (best_score < current_score) {
             best_score = current_score;
             best_cut = std::move(current_cut);
           }
-          //LOG("score = " << current_score << ", best score = " << best_score);
+          LOG("score = " << current_score << ", best score = " << best_score);
         }
       }
     }
@@ -179,5 +181,5 @@ public:
 
 private:
   const string class_name_ = "ImproveSolution";
+  ofstream clog;
 };
-

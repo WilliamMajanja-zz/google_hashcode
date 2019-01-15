@@ -7,6 +7,7 @@ fi
 mkdir output/$1
 
 mkdir solutions/$1
+mkdir solutions/$1/logs
 cp templates/* solutions/$1/
 if [[ "$OSTYPE" == "darwin"* ]]; then
   sed -i '' -e "s/<<test_name>>/$1/g" solutions/$1/*

@@ -9,6 +9,7 @@ public:
 
   const auto& input() const { return input_; }
   const auto& output() { return output_; }
+  const auto& number() { return number_; }
 
   auto extract_output() { return move(output_); }
 
