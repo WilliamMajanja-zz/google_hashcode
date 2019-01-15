@@ -1,14 +1,15 @@
 #pragma once
 
-#include "../../base/solution.h"
+#include "../../base/async_solution.h"
 
-class <<TestName>>Solution : public Solution {
+class <<TestName>>Solution : public AsyncSolution {
 public:
-  <<TestName>>Solution():
-    Solution(/* path to test: "../../input/<filename>.in"*/) {}
+  template <typename... T>
+  <<TestName>>Solution(T&&... args):
+      AsyncSolution(std::forward<T>(args)...) {}
 
   void solve_internal() override {
-    LOG("called")
+    /* solve problem here */
   }
 
 private:

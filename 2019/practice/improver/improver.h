@@ -44,9 +44,6 @@ public:
     bool result_improved = false;
     for (auto i : permutation) {
       auto old_sl = sls[i];
-      if (++cnt % 100 == 0) {
-        print_output(output, "../../output/medium/" + to_string(old_score) + ".ans");
-      }
       PROCESS_CASE(sls[i].st.X)
       PROCESS_CASE(sls[i].st.Y)
       PROCESS_CASE(sls[i].fin.X)
