@@ -1,3 +1,0 @@
-#!/bin/bash -e
-clang++ -std=c++1z launcher.cpp 
-time ./a.out
