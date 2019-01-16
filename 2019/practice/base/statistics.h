@@ -57,6 +57,5 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
   for (const auto& row : qwe)
     for (const auto& cell : row)
       score += cell;
-  LOG("total score: " << score)
   return score;
 }
