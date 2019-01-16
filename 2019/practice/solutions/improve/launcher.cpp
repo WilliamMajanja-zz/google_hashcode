@@ -14,6 +14,6 @@ int main() {
 
   auto score = calculate_score(manager.input(), manager.output());
   LOG("score: " << score)
-  print_output(manager.output(), score);
+  print_output(manager.output(), score, "../../output/");
   return 0;
 }

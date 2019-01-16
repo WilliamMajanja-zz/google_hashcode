@@ -15,3 +15,4 @@ else
   sed -i -e "s/<<test_name>>/$1/g" solutions/$1/*
   sed -i -e "s/<<TestName>>/$2/g" solutions/$1/*
 fi
+mkdir solutions/$1/logs
