@@ -9,6 +9,8 @@ public:
     number_(number),
     free_threads_count_(free_threads_count) {}
 
+  virtual ~AsyncSolution() = default;
+
   const auto& input() const { return input_; }
   const auto& output() { return output_; }
   const auto& number() { return number_; }

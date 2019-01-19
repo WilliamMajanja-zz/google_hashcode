@@ -1,3 +1,4 @@
 #!/bin/bash -e
-g++ launcher.cpp -pthread --std=c++1z
+rm -rf logs/*
+g++ launcher.cpp -pthread -I/usr/X11R6/include -L/usr/X11R6/lib -lX11 --std=c++1z
 time ./a.out

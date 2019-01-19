@@ -2,7 +2,8 @@
 #include "split_and_merge.h"
 #include "../../base/solution_manager.h"
 #include "../../base/statistics.h"
-#include "../../improver/improver.h"
+//#include "../../improver/improver.h"
+#include "../../visualizer/visualizer.h"
 
 int main() {
   SolutionManager<
@@ -17,6 +18,12 @@ int main() {
   LOG("snail score: " << score)
   print_output(manager.output(), score, "../../output/snail/");
 
+  Visualizer visualizer(manager.input().R, manager.input().C);
+  visualizer.visualize_output(manager.input(), manager.output());
+
+  return 0;
+
+  /*
   auto improving_result = Improver::improve(manager.input(), manager.output());
   while (improving_result.Y) {
     improving_result = Improver::improve(manager.input(), move(improving_result.X));
@@ -24,4 +31,5 @@ int main() {
   auto improved_score = calculate_score(manager.input(), improving_result.X);
   print_output(improving_result.X, improved_score, "../../output/snail/");
   LOG("snail improved score: " << improved_score)
+  */
 }
