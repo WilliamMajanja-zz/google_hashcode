@@ -20,14 +20,14 @@ double calculate_score(const Input& input, const Output& output, bool enable_log
   /* validate and calculate score here */
 
   assert(input.C == output.servers.size() && "size of output.servers should be equal to input number of servers");
-  for (const auto& serverVideos : output.servers) {
-    assert(std::is_sorted(serverVideos.begin(), serverVideos.end()) && "videos in cache servers should be sorted");
+  for (const auto& server_videos : output.servers) {
+    assert(std::is_sorted(server_videos.begin(), server_videos.end()) && "videos in cache servers should be sorted");
 
-    int64_t sumSize = 0;
-    for (const auto video : serverVideos) {
-      sumSize += input.videos[video];
+    int64_t sum_size = 0;
+    for (const auto video : server_videos) {
+      sum_size += input.videos[video];
     }
-    assert(sumSize <= input.X && "sum of video's sizes in cache servers should be less or equal to X");
+    assert(sum_size <= input.X && "sum of video's sizes in cache servers should be less or equal to X");
   }
 
   double score = 0;
