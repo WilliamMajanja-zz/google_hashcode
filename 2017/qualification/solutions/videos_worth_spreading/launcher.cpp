@@ -8,7 +8,7 @@ int main() {
   SolutionManager<
     VideosWorthSpreadingSolution,
     VideosWorthSpreadingSplitAndMerge
-  > manager("../../input/me_at_the_zoo.in");
+  > manager("../../input/videos_worth_spreading.in");
   manager.init_solutions();
   manager.run_solutions();
   manager.merge_output();

@@ -60,7 +60,11 @@ inline Input read_input(const std::string& fname) {
     for (int j = 0; j < endp.K; ++j) {
       int c, L;
       in_f >> c >> L;
-      endp.connections.emplace_back(c, L);
+      endp.connections.emplace_back(L, c);
+    }
+    sort(endp.connections.begin(), endp.connections.end());
+    for (auto& qwe : endp.connections) {
+      swap(qwe.X, qwe.Y);
     }
     in.endpoints.push_back(move(endp));
   }
@@ -91,6 +95,7 @@ inline Output read_output(const std::string& fname) {
       str >> x;
       server.push_back(x);
     }
+    LOG("server size: " << server.size());
   }
   return result;
 }

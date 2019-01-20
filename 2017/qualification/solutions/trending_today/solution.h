@@ -18,8 +18,8 @@ public:
     /* solve problem here */
 
     std::vector<Request> requests = input_.requests;
-    std::sort(requests.begin(), requests.end(), [](const auto& lhs, const auto& rhs) {
-      return lhs.N > rhs.N;
+    std::sort(requests.begin(), requests.end(), [this](const auto& lhs, const auto& rhs) {
+      return 0;
     });
 
     std::vector<int> sizes(input_.C);
