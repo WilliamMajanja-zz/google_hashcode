@@ -10,6 +10,7 @@
 #include <memory>
 #include <random>
 #include <thread>
+#include <unordered_map>
 #include <vector>
 
 #define X first
@@ -35,6 +36,7 @@ struct Input {
   vector<int> videos;
   vector<Endpoint> endpoints;
   vector<Request> requests;
+  unordered_map<int, vector<Request>> requests_by_video;
 };
 
 struct Output {
@@ -66,6 +68,7 @@ inline Input read_input(const std::string& fname) {
     Request req;
     in_f >> req.V >> req.E >> req.N;
     in.requests.push_back(req);
+    in.requests_by_video[req.V].push_back(req);
   }
   LOG("read requests count: " << in.requests.size())
   return in;
