@@ -76,9 +76,8 @@ public:
         }
       }
 
-      if (best_c == -1) {
+      if (best_c != -1) {
         done = false;
-      } else {
         used_video[best_c].insert(best_v);
         used_mem[best_c] += videos[best_v];
       }
