@@ -5,10 +5,11 @@
 #include "../../improver/improver.h"
 
 int main() {
+  LOG("launched")
   SolutionManager<
     ExampleSolution,
     ExampleSplitAndMerge
-  > manager("../../input/input.txt");
+  > manager("../../input/kittens.in");
   manager.init_solutions();
   manager.run_solutions();
   manager.merge_output();
