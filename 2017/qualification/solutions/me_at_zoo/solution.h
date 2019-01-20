@@ -61,7 +61,9 @@ public:
             if (latency_to_c < latency_to_v) {
               if (auto it = requests_by_video.find(v); it != requests_by_video.end()) {
                 for (const Request& req : it->second) {
-                  diff += req.N * 1ll * (latency_to_v - latency_to_c);
+                  if (req.E == e) {
+                    diff += req.N * 1ll * (latency_to_v - latency_to_c);
+                  }
                 }
               }
             }
