@@ -3,6 +3,7 @@
 #include "common.h"
 
 double calculate_score_for_request(const Request& request, const Input& input, const Output& output, bool enable_logging = true) {
+  LOG("request: " << request.V << " " << request.E << ' ' << request.N)
   const auto& endpoint = input.endpoints[request.E];
 
   int min_latency = endpoint.L;
