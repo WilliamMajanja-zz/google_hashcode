@@ -43,6 +43,7 @@ double calculate_score(const Input& input, const Output& output, bool enable_log
 
   double score = 0;
   double mean_improvement = 0;
+  double sumOfRequests = 0;
 
   for (const auto& request : input.requests) {
     const auto& endpoint = input.endpoints[request.E];
@@ -51,10 +52,12 @@ double calculate_score(const Input& input, const Output& output, bool enable_log
 
     score += score_for_request;
     mean_improvement += improvement;
+
+    sumOfRequests += request.N;
   }
 
-  score /= input.R;
-  mean_improvement /= input.R;
+  score = score * 1000 / sumOfRequests;
+  mean_improvement /= sumOfRequests;
 
   if (enable_logging) {
     LOG("mean mean_improvement is " << mean_improvement);
