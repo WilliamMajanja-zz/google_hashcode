@@ -57,7 +57,7 @@ double calculate_score(const Input& input, const Output& output, bool enable_log
   }
 
   score = score * 1000 / sumOfRequests;
-  mean_improvement /= sumOfRequests;
+  mean_improvement /= input.R;
 
   if (enable_logging) {
     LOG("mean mean_improvement is " << mean_improvement);
