@@ -8,7 +8,7 @@ int main() {
   SolutionManager<
     KittensSolution,
     KittensSplitAndMerge
-  > manager(/* write path to input here "../../input/input.in" */);
+  > manager( "../../input/kittens.in");
   manager.init_solutions();
   manager.run_solutions();
   manager.merge_output();
