@@ -3,7 +3,8 @@
 #include "visualizer.h"
 
 int main() {
-  Input input = read_input("../input/a_example.in");
-  Visualizer visualizer(1000, 1000);
+  Input input = read_input("../input/kittens.in");
+  Visualizer visualizer(input.V, 50000);
+  visualizer.visualize_input(input);
   return 0;
 }

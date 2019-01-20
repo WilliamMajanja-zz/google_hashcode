@@ -17,10 +17,14 @@ public:
     image_.fill(0);
   }
 
-  void visualize_output(const Input& input, const Output& output) {
-    LOG("visualize field: " << input.R << 'x' << input.C)
-    for (int i = 0; i < input.endpoints.size(); ++i) {
-      image_.draw_line(0, input.endpoints[i].L, colors
+  void visualize_input(const Input& input) {
+    vector<int> max_lat(input.V);
+    for (const auto& req : input.requests) {
+      max_lat[req.V] += input.endpoints[req.E].L;
+    }
+
+    for (int i = 0; i < max_lat.size(); ++i) {
+      image_.draw_line(0, i, max_lat[i], i, colors::red);
     }
     image_.display();
   }
