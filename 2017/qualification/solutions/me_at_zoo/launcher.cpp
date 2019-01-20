@@ -8,7 +8,7 @@ int main() {
   SolutionManager<
     MeAtZooSolution,
     MeAtZooSplitAndMerge
-  > manager(/* write path to input here "../../input/input.in" */);
+  > manager("../../input/me_at_the_zoo.in");
   manager.init_solutions();
   manager.run_solutions();
   manager.merge_output();

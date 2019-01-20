@@ -10,7 +10,9 @@
 #include <memory>
 #include <random>
 #include <thread>
+#include <unordered_map>
 #include <vector>
+#include <sstream>
 
 #define X first
 #define Y second
@@ -35,6 +37,7 @@ struct Input {
   vector<int> videos;
   vector<Endpoint> endpoints;
   vector<Request> requests;
+  unordered_map<int, vector<Request>> requests_by_video;
 };
 
 struct Output {
@@ -66,9 +69,30 @@ inline Input read_input(const std::string& fname) {
     Request req;
     in_f >> req.V >> req.E >> req.N;
     in.requests.push_back(req);
+    in.requests_by_video[req.V].push_back(req);
   }
   LOG("read requests count: " << in.requests.size())
   return in;
+}
+
+inline Output read_output(const std::string& fname) {
+  ifstream in_f(fname);
+  int n = 0;
+  in_f >> n;
+  Output result;
+  result.servers.resize(n);
+  string s;
+  getline(in_f, s);
+  for (auto& server : result.servers) {
+    getline(in_f, s);
+    std::stringstream str(s);
+    while (!str.eof()) {
+      int x;
+      str >> x;
+      server.push_back(x);
+    }
+  }
+  return result;
 }
 
 inline void print_output(const Output& output, size_t score, const std::string& fpath = "./") {
