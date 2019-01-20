@@ -9,6 +9,7 @@ public:
       AsyncSolution(std::forward<T>(args)...) {}
 
   void solve_internal() override {
+    output_.servers.resize(input_.C);
     /* solve problem here */
   }
 
