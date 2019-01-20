@@ -13,7 +13,7 @@ double calculate_score_for_request(const Request& request, const Input& input, c
     }
   }
 
-  return endpoint.L - min_latency;
+  return (endpoint.L - min_latency) * request.N;
 }
 
 double calculate_score(const Input& input, const Output& output, bool enable_logging = true) {
