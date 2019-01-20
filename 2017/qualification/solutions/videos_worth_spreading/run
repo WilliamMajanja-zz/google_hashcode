@@ -1,4 +1,4 @@
 #!/bin/bash -e
 rm -rf logs/*
-g++ launcher.cpp -pthread --std=c++1z
+clang++ -O2 launcher.cpp -std=c++1z
 time ./a.out
