@@ -1,17 +1,12 @@
 #pragma once
 
-#include <unordered_map>
-#include <unordered_set>
+#include "../../base/solution.h"
 
-#include "../../base/async_solution.h"
-
-class TrendingTodaySolution : public AsyncSolution {
+class TrendingTodaySolution : public Solution {
 public:
   template <typename... T>
   TrendingTodaySolution(T&&... args):
-      AsyncSolution(std::forward<T>(args)...) {
-    clog = ofstream("logs/" + to_string(number()) + ".log");
-  }
+      Solution(std::forward<T>(args)...) {}
 
   void solve_internal() override {
     LOG("started")
@@ -59,6 +54,5 @@ public:
 
 private:
   const string class_name_ = "TrendingTodaySolution";
-  ofstream clog;
 };
 

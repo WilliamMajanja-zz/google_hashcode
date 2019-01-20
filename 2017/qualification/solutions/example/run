@@ -1,3 +1,3 @@
 #!/bin/bash -e
-g++ launcher.cpp -pthread --std=c++1z
+g++ launcher.cpp -pthread
 time ./a.out

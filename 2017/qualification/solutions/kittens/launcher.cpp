@@ -1,27 +1,21 @@
 #include "solution.h"
-#include "split_and_merge.h"
-#include "../../base/solution_manager.h"
 #include "../../base/statistics.h"
 #include "../../improver/improver.h"
 
 int main() {
-  SolutionManager<
-    KittensSolution,
-    KittensSplitAndMerge
-  > manager( "../../input/kittens.in");
-  manager.init_solutions();
-  manager.run_solutions();
-  manager.merge_output();
+  auto input = read_input("../../input/kittens.in");
+  KittensSolution solution(input);
+  solution.solve();
 
-  auto score = calculate_score(manager.input(), manager.output());
+  auto score = calculate_score(solution.input(), solution.output());
   LOG("kittens score: " << score)
-  print_output(manager.output(), score, "../../output/kittens/");
+  print_output(solution.output(), score, "../../output/kittens/");
 
-  auto improving_result = Improver::improve(manager.input(), manager.output());
+  auto improving_result = Improver::improve(solution.input(), solution.output());
   while (improving_result.Y) {
-    improving_result = Improver::improve(manager.input(), move(improving_result.X));
+    improving_result = Improver::improve(solution.input(), move(improving_result.X));
   }
-  auto improved_score = calculate_score(manager.input(), improving_result.X);
+  auto improved_score = calculate_score(solution.input(), improving_result.X);
   print_output(improving_result.X, improved_score, "../../output/kittens/");
   LOG("kittens improved score: " << improved_score)
 }

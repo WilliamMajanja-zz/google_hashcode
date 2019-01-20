@@ -1,27 +1,21 @@
 #include "solution.h"
-#include "split_and_merge.h"
-#include "../../base/solution_manager.h"
 #include "../../base/statistics.h"
 #include "../../improver/improver.h"
 
 int main() {
-  SolutionManager<
-    TrendingTodaySolution,
-    TrendingTodaySplitAndMerge
-  > manager("../../input/trending_today.in");
-  manager.init_solutions();
-  manager.run_solutions();
-  manager.merge_output();
+  auto input = read_input("../../input/trending_today.in");
+  TrendingTodaySolution solution(input);
+  solution.solve();
 
-  auto score = calculate_score(manager.input(), manager.output());
+  auto score = calculate_score(solution.input(), solution.output());
   LOG("trending_today score: " << score)
-  print_output(manager.output(), score, "../../output/trending_today/");
+  print_output(solution.output(), score, "../../output/trending_today/");
 
-  auto improving_result = Improver::improve(manager.input(), manager.output());
+  auto improving_result = Improver::improve(solution.input(), solution.output());
   while (improving_result.Y) {
-    improving_result = Improver::improve(manager.input(), move(improving_result.X));
+    improving_result = Improver::improve(solution.input(), move(improving_result.X));
   }
-  auto improved_score = calculate_score(manager.input(), improving_result.X);
+  auto improved_score = calculate_score(solution.input(), improving_result.X);
   print_output(improving_result.X, improved_score, "../../output/trending_today/");
   LOG("trending_today improved score: " << improved_score)
 }

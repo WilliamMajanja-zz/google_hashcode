@@ -5,6 +5,7 @@ if [ "$#" -ne 2 ]; then
 fi
 
 mkdir output/$1
+echo "output" > output/$1/output.txt
 
 mkdir solutions/$1
 cp templates/* solutions/$1/

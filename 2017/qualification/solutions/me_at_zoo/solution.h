@@ -1,18 +1,12 @@
 #pragma once
 
-#include "../../base/async_solution.h"
+#include "../../base/solution.h"
 
-#include <set>
-#include <unordered_map>
-#include <unordered_set>
-
-class MeAtZooSolution : public AsyncSolution {
+class MeAtZooSolution : public Solution {
 public:
   template <typename... T>
   MeAtZooSolution(T&&... args):
-      AsyncSolution(std::forward<T>(args)...) {
-    clog = ofstream("logs/" + to_string(number()) + ".log");
-  }
+      Solution(std::forward<T>(args)...) {}
 
   const int INF = 1e9;
 
@@ -98,6 +92,5 @@ public:
 
 private:
   const string class_name_ = "MeAtZooSolution";
-  ofstream clog;
 };
 

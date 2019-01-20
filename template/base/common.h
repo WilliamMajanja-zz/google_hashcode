@@ -9,10 +9,12 @@
 #include <iostream>
 #include <memory>
 #include <random>
+#include <sstream>
 #include <thread>
-#include <vector>
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
+#include <vector>
+#include <set>
 
 #define X first
 #define Y second
@@ -36,6 +38,13 @@ inline Input read_input(const std::string& fname) {
   Input in;
   /* read input here */
   return in;
+}
+
+inline Output read_output(const std::string& fname) {
+  ifstream in_f(fname);
+  Output out;
+  /* read input here */
+  return out;
 }
 
 inline void print_output(const Output& output, size_t score, const std::string& fpath = "./") {

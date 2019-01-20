@@ -1,103 +1,58 @@
 #pragma once
 
-#include "../../base/async_solution.h"
+#include "../../base/solution.h"
 
-#include <set>
-#include <unordered_map>
-#include <unordered_set>
-
-class VideosWorthSpreadingSolution : public AsyncSolution {
+class VWSSolution : public Solution {
 public:
   template <typename... T>
-  VideosWorthSpreadingSolution(T&&... args):
-      AsyncSolution(std::forward<T>(args)...) {
-    clog = ofstream("logs/" + to_string(number()) + ".log");
-  }
-
-  const int INF = 1e9;
+  VWSSolution(T&&... args):
+      Solution(std::forward<T>(args)...) {}
 
   void solve_internal() override {
     LOG("started")
+    /* solve problem here */
 
-    int V = input().V;
-    int E = input().E;
-    int R = input().R;
-    int C = input().C;
-    int X = input().X;
-    vector<int> videos = input().videos;
-    const vector<Endpoint>& endpoints = input().endpoints;
-    const vector<Request>& requests = input().requests;
-    const unordered_map<int, vector<Request>>& requests_by_video = input().requests_by_video;
+    std::vector<Request> requests = input_.requests;
+    std::sort(requests.begin(), requests.end(), [this](const auto& lhs, const auto& rhs) {
+      return 0;
+    });
 
-    bool done;
-    unordered_map<int, set<int>> used_video;
-    unordered_map<int, int> used_mem;
-    do {
-      done = true;
+    std::vector<int> sizes(input_.C);
+    std::unordered_map<int, std::unordered_set<int>> videos_in_server;
+    for (const auto& request : requests) {
+      const auto& endpoint = input_.endpoints[request.E];
 
-      int best_c = -1, best_v = -1;
-      long long best_diff = 0;
-      for (int c = 0; c < C; ++c) {
-        for (int v = 0; v < V; ++v) {
-          if (used_video[c].count(v)) {
-            continue;
-          }
-          if (used_mem[c] + videos[v] > X) {
-            continue;
-          }
+      const auto video_size = input_.videos[request.V];
 
-          long long diff = 0;
-          for (int e = 0; e < E; ++e) {
-            int latency_to_v = endpoints[e].L;
-            int latency_to_c = INF;
-            for (const auto& [cache_server, lat] : endpoints[e].connections) {
-              if (used_video[cache_server].count(v)) {
-                latency_to_v = min(latency_to_v, lat);
-              }
-              if (c == cache_server) {
-                latency_to_c = lat;
-              }
-            }
-            if (latency_to_c < latency_to_v) {
-              if (auto it = requests_by_video.find(v); it != requests_by_video.end()) {
-                for (const Request& req : it->second) {
-                  if (req.E == e) {
-                    diff += req.N * 1ll * (latency_to_v - latency_to_c);
-                  }
-                }
-              }
-            }
-          }
-          if (diff > best_diff) {
-            best_diff = diff;
-            best_c = c;
-            best_v = v;
+      std::pair<int, int64_t> best = {-1, 0};
+      for (const auto& [server, latency] : endpoint.connections) {
+        if (videos_in_server[server].count(request.V) || sizes[server] + video_size <= input_.X) {
+          const auto cur_score = (endpoint.L - latency) * static_cast<int64_t>(request.N);
+          if (best.second < cur_score) {
+            best = {server, cur_score};
           }
         }
       }
-
-      if (best_c != -1) {
-        done = false;
-        used_video[best_c].insert(best_v);
-        used_mem[best_c] += videos[best_v];
+      if (best.first != -1) {
+        if (videos_in_server[best.first].count(request.V) == 0) {
+          videos_in_server[best.first].insert(request.V);
+          sizes[best.first] += video_size;
+        }
       }
-    } while (!done);
+    }
 
-    vector<vector<int>>& servers = output_.servers;
-    servers.resize(C);
-    for (int c = 0; c < C; ++c) {
-      const set<int>& set_of_vidoses = used_video[c];
-      servers[c].reserve(set_of_vidoses.size());
-      for (int vidos : set_of_vidoses) {
-        servers[c].push_back(vidos);
+    output_.servers.resize(input_.C);
+    for (const auto& [server, videos] : videos_in_server) {
+      for (const auto video : videos) {
+        output_.servers[server].push_back(video);
       }
+      std::sort(output_.servers[server].begin(), output_.servers[server].end());
     }
 
     LOG("finished")
   }
 
 private:
-  const string class_name_ = "VideosWorthSpreadingSolution";
-  ofstream clog;
+  const string class_name_ = "VWSSolution";
 };
 

@@ -1,17 +1,12 @@
 #pragma once
 
-#include <unordered_map>
-#include <unordered_set>
+#include "../../base/solution.h"
 
-#include "../../base/async_solution.h"
-
-class KittensSolution : public AsyncSolution {
+class KittensSolution : public Solution {
 public:
   template <typename... T>
   KittensSolution(T&&... args):
-      AsyncSolution(std::forward<T>(args)...) {
-    clog = ofstream("logs/" + to_string(number()) + ".log");
-  }
+      Solution(std::forward<T>(args)...) {}
 
   void solve_internal() override {
     LOG("started")
@@ -65,8 +60,8 @@ public:
 
     int i = 0;
     while (optimize()) {
-      cerr << "one more optimization cycle" << endl;
-      if (i++ > 10) {
+      LOG("one more optimization cycle")
+      if (i++ > 1) {
         break;
       }
     }
@@ -83,7 +78,6 @@ public:
   }
 
 private:
-  const string class_name_ = "TrendingTodaySolution";
-  ofstream clog;
+  const string class_name_ = "KittensSolution";
 };
 
