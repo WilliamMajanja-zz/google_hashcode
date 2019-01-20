@@ -8,7 +8,7 @@ int main() {
   SolutionManager<
     TrendingTodaySolution,
     TrendingTodaySplitAndMerge
-  > manager(/* write path to input here "../../input/input.in" */);
+  > manager("../../input/trending_today.in");
   manager.init_solutions();
   manager.run_solutions();
   manager.merge_output();
