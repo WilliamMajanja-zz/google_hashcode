@@ -20,7 +20,7 @@ std::pair<double, double> calculate_stats_for_request(const Request& request, co
     const auto& endpoint = input.endpoints[request.E];
     const auto latency = calculate_latency_for_request(request, input, output, enable_logging);
 
-    return {(endpoint.L - latency) * request.N, endpoint.L * 1.0 / latency};
+    return {(endpoint.L - latency) * request.N, (endpoint.L - latency) * 1. / endpoint.L};
 }
 
 double calculate_score_for_request(const Request& request, const Input& input, const Output& output, bool enable_logging = true) {
