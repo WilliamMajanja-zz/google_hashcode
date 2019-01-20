@@ -11,6 +11,8 @@
 #include <random>
 #include <thread>
 #include <vector>
+#include <unordered_set>
+#include <unordered_map>
 
 #define X first
 #define Y second

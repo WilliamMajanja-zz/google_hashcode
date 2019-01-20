@@ -1,23 +1,17 @@
 #pragma once
 
-#include "../../base/async_solution.h"
+#include "../../base/solution.h"
 
-class <<TestName>>Solution : public AsyncSolution {
+class <<TestName>>Solution : public Solution {
 public:
   template <typename... T>
   <<TestName>>Solution(T&&... args):
-      AsyncSolution(std::forward<T>(args)...) {
-    clog = ofstream("logs/" + to_string(number()) + ".log");
-  }
+      Solution(std::forward<T>(args)...) {}
 
   void solve_internal() override {
-    LOG("started")
-    /* solve problem here */
-    LOG("finished")
   }
 
 private:
   const string class_name_ = "<<TestName>>Solution";
-  ofstream clog;
 };
 
