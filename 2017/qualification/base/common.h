@@ -12,6 +12,7 @@
 #include <thread>
 #include <unordered_map>
 #include <vector>
+#include <sstream>
 
 #define X first
 #define Y second
@@ -72,6 +73,26 @@ inline Input read_input(const std::string& fname) {
   }
   LOG("read requests count: " << in.requests.size())
   return in;
+}
+
+inline Output read_output(const std::string& fname) {
+  ifstream in_f(fname);
+  int n = 0;
+  in_f >> n;
+  Output result;
+  result.servers.resize(n);
+  string s;
+  getline(in_f, s);
+  for (auto& server : result.servers) {
+    getline(in_f, s);
+    std::stringstream str(s);
+    while (!str.eof()) {
+      int x;
+      str >> x;
+      server.push_back(x);
+    }
+  }
+  return result;
 }
 
 inline void print_output(const Output& output, size_t score, const std::string& fpath = "./") {
