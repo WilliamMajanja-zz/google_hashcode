@@ -17,31 +17,57 @@ public:
     LOG("started")
 
     std::vector<Request> requests = input_.requests;
-    std::sort(requests.begin(), requests.end(), [this](const auto& lhs, const auto& rhs) {
+    std::sort(requests.begin(), requests.end(), [](const auto& lhs, const auto& rhs) {
       return lhs.N > rhs.N;
     });
 
     std::vector<int> sizes(input_.C);
     std::unordered_map<int, std::unordered_set<int>> videos_in_server;
-    for (const auto& request : requests) {
-      const auto& endpoint = input_.endpoints[request.E];
 
-      const auto video_size = input_.videos[request.V];
+    auto optimize = [&] {
+      bool updated = false;
 
-      std::pair<int, int64_t> best = {-1, 0};
-      for (const auto& [server, latency] : endpoint.connections) {
-        if (videos_in_server[server].count(request.V) || sizes[server] + video_size <= input_.X) {
-          const auto cur_score = (endpoint.L - latency) * static_cast<int64_t>(request.N);
-          if (best.second < cur_score) {
-            best = {server, cur_score};
+      for (const auto& request : requests) {
+        const auto& endpoint = input_.endpoints[request.E];
+
+        const auto video_size = input_.videos[request.V];
+
+        std::pair<int, int64_t> best = {-1, 0};
+        for (const auto& [server, latency] : endpoint.connections) {
+          if (videos_in_server[server].count(request.V)) {
+            const auto cur_score = (endpoint.L - latency) * static_cast<int64_t>(request.N);
+            if (best.second < cur_score) {
+              best = {server, cur_score};
+            }
+          }
+        }
+        if (best.first == -1) {
+          for (const auto& [server, latency] : endpoint.connections) {
+            if (sizes[server] + video_size <= input_.X) {
+              const auto cur_score = (endpoint.L - latency) * static_cast<int64_t>(request.N);
+              if (best.second < cur_score) {
+                best = {server, cur_score};
+              }
+            }
+          }
+        }
+        if (best.first != -1) {
+          updated = true;
+          if (videos_in_server[best.first].count(request.V) == 0) {
+            videos_in_server[best.first].insert(request.V);
+            sizes[best.first] += video_size;
           }
         }
       }
-      if (best.first != -1) {
-        if (videos_in_server[best.first].count(request.V) == 0) {
-          videos_in_server[best.first].insert(request.V);
-          sizes[best.first] += video_size;
-        }
+
+      return updated;
+    };
+
+    int i = 0;
+    while (optimize()) {
+      cerr << "one more optimization cycle" << endl;
+      if (i++ > 10) {
+        break;
       }
     }
 
