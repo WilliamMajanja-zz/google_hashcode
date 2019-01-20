@@ -2,8 +2,7 @@
 
 #include "common.h"
 
-double calculate_score_for_request(const Request& request, const Input& input, const Output& output, bool enable_logging = true) {
-  LOG("request: " << request.V << " " << request.E << ' ' << request.N)
+double calculate_latency_for_request(const Request& request, const Input& input, const Output& output, bool enable_logging = true) {
   const auto& endpoint = input.endpoints[request.E];
 
   int min_latency = endpoint.L;
@@ -14,7 +13,13 @@ double calculate_score_for_request(const Request& request, const Input& input, c
     }
   }
 
-  return (endpoint.L - min_latency) * request.N;
+  return min_latency;
+}
+
+double calculate_score_for_request(const Request& request, const Input& input, const Output& output, bool enable_logging = true) {
+  const auto& endpoint = input.endpoints[request.E];
+  const auto latency = calculate_latency_for_request(request, input, output, enable_logging);
+  return (endpoint.L - latency) * request.N;
 }
 
 double calculate_score(const Input& input, const Output& output, bool enable_logging = true) {
@@ -32,12 +37,23 @@ double calculate_score(const Input& input, const Output& output, bool enable_log
   }
 
   double score = 0;
+  double mean_improvement = 0;
 
   for (const auto& request : input.requests) {
-    score += calculate_score_for_request(request, input, output, enable_logging);
+    const auto& endpoint = input.endpoints[request.E];
+
+    const auto latency = calculate_latency_for_request(request, input, output, enable_logging);
+    score += (endpoint.L - latency) * request.N;
+
+    mean_improvement += endpoint.L * 1.0 / latency;
   }
 
   score /= input.R;
+  mean_improvement /= input.R;
+
+  if (enable_logging) {
+    LOG("mean mean_improvement is " << mean_improvement);
+  }
 
   return score;
 }

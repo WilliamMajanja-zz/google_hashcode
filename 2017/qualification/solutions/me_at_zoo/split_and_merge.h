@@ -1,6 +1,6 @@
 #pragma once
 
-class ExampleSplitAndMerge {
+class MeAtZooSplitAndMerge {
 public:
   static vector<Input> split_input(const Input& input) {
     const string class_name_ = "ExampleSpliteAndMerge";

@@ -28,7 +28,7 @@ public:
     for (int i = 0; i < input.requests.size(); ++i) {
       auto request = input.requests[i];
       int score = input.endpoints[request.E].L * request.N;
-      int our_score = score - calculate_score_for_request(request, input, output);
+      int our_score = score - calculate_latency_for_request(request, input, output);
       score = double(score) / double(max_score) * double(width_);
       our_score = double(our_score) / double(max_score) * double(width_);
       image_.draw_line(0, i, score, i, colors::red);
