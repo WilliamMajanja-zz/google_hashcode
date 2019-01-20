@@ -61,9 +61,7 @@ public:
             if (latency_to_c < latency_to_v) {
               if (auto it = requests_by_video.find(v); it != requests_by_video.end()) {
                 for (const Request& req : it->second) {
-                  if (req.E == e) {
-                    diff += req.N * 1ll * (latency_to_v - latency_to_c);
-                  }
+                  diff += req.N * 1ll * (latency_to_v - latency_to_c);
                 }
               }
             }
@@ -76,9 +74,8 @@ public:
         }
       }
 
-      if (best_c == -1) {
+      if (best_c != -1) {
         done = false;
-      } else {
         used_video[best_c].insert(best_v);
         used_mem[best_c] += videos[best_v];
       }
