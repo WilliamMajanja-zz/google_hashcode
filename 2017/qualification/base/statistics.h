@@ -16,10 +16,15 @@ double calculate_latency_for_request(const Request& request, const Input& input,
   return min_latency;
 }
 
+std::pair<double, double> calculate_stats_for_request(const Request& request, const Input& input, const Output& output, bool enable_logging = true) {
+    const auto& endpoint = input.endpoints[request.E];
+    const auto latency = calculate_latency_for_request(request, input, output, enable_logging);
+
+    return {(endpoint.L - latency) * request.N, endpoint.L * 1.0 / latency};
+}
+
 double calculate_score_for_request(const Request& request, const Input& input, const Output& output, bool enable_logging = true) {
-  const auto& endpoint = input.endpoints[request.E];
-  const auto latency = calculate_latency_for_request(request, input, output, enable_logging);
-  return (endpoint.L - latency) * request.N;
+  return calculate_stats_for_request(request, input, output, enable_logging).first;
 }
 
 double calculate_score(const Input& input, const Output& output, bool enable_logging = true) {
@@ -42,10 +47,10 @@ double calculate_score(const Input& input, const Output& output, bool enable_log
   for (const auto& request : input.requests) {
     const auto& endpoint = input.endpoints[request.E];
 
-    const auto latency = calculate_latency_for_request(request, input, output, enable_logging);
-    score += (endpoint.L - latency) * request.N;
+    const auto [score_for_request, improvement] = calculate_stats_for_request(request, input, output, enable_logging);
 
-    mean_improvement += endpoint.L * 1.0 / latency;
+    score += score_for_request;
+    mean_improvement += improvement;
   }
 
   score /= input.R;
