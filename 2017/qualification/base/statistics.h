@@ -5,15 +5,15 @@
 double calculate_score_for_request(const Request& request, const Input& input, const Output& output, bool enable_logging = true) {
   const auto& endpoint = input.endpoints[request.E];
 
-  int minLatency = endpoint.L;
+  int min_latency = endpoint.L;
 
   for (const auto& [server, latency] : endpoint.connections) {
     if (std::binary_search(output.servers[server].begin(), output.servers[server].end(), request.V)) {
-      minLatency = std::min(minLatency, latency);
+      min_latency = std::min(min_latency, latency);
     }
   }
 
-  return endpoint.L - minLatency;
+  return endpoint.L - min_latency;
 }
 
 double calculate_score(const Input& input, const Output& output, bool enable_logging = true) {
