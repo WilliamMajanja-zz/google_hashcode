@@ -7,6 +7,8 @@ public:
   AsyncSolution(const Input& input, size_t number, atomic<size_t>& free_threads_count):
     input_(input), number_(number), free_threads_count_(free_threads_count) {}
 
+  virtual ~AsyncSolution() = default;
+
   const auto& input() const { return input_; }
   const auto& output() { return output_; }
   const auto& number() { return number_; }
