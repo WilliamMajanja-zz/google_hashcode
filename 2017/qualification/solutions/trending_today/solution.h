@@ -9,46 +9,66 @@ public:
       Solution(std::forward<T>(args)...) {}
 
   void solve_internal() override {
+    output_.servers.resize(input().C);
     LOG("started")
-    /* solve problem here */
-
-    std::vector<Request> requests = input_.requests;
-    std::sort(requests.begin(), requests.end(), [this](const auto& lhs, const auto& rhs) {
-      return 0;
-    });
-
-    std::vector<int> sizes(input_.C);
-    std::unordered_map<int, std::unordered_set<int>> videos_in_server;
-    for (const auto& request : requests) {
-      const auto& endpoint = input_.endpoints[request.E];
-
-      const auto video_size = input_.videos[request.V];
-
-      std::pair<int, int64_t> best = {-1, 0};
-      for (const auto& [server, latency] : endpoint.connections) {
-        if (videos_in_server[server].count(request.V) || sizes[server] + video_size <= input_.X) {
-          const auto cur_score = (endpoint.L - latency) * static_cast<int64_t>(request.N);
-          if (best.second < cur_score) {
-            best = {server, cur_score};
+    vector<PT> videos(input().videos.size());
+    for (int i = 0; i < videos.size(); ++i) {
+      videos[i].Y = i;
+    }
+    for (auto request : input().requests) {
+      videos[request.V].X += request.N;
+    }
+    LOG("videos inited")
+    sort(videos.rbegin(), videos.rend());
+    int ind = 0;
+    int sum = 0;
+    LOG("sorted")
+    int cnt = 0;
+    int free_space = 0;
+    vector<bool> used(videos.size());
+    for (auto [sz, vid] : videos) {
+      if (used[vid]) {
+        continue;
+      }
+      if (input().videos[vid] + sum > input().X) {
+        auto cur_free_space = input().X - sum;
+        bool ok = 1;
+        while (cur_free_space > 100 && ok) {
+          ok = 0;
+          for (int i = 0; i < videos.size(); ++i) {
+            int j = i;
+            if (!used[j]) {
+              if (input().videos[j] <= cur_free_space) {
+                ok = 1;
+                LOG("added " << input().videos[j])
+                sum += input().videos[j];
+                cur_free_space = input().X - sum;
+                output_.servers[ind].push_back(j);
+                ++cnt;
+                used[j] = 1;
+                break;
+              }
+            }
           }
         }
+        LOG("server: " << ind << " free space: " << cur_free_space)
+        free_space += cur_free_space;
+        sum = 0;
+        ++ind;
       }
-      if (best.first != -1) {
-        if (videos_in_server[best.first].count(request.V) == 0) {
-          videos_in_server[best.first].insert(request.V);
-          sizes[best.first] += video_size;
-        }
+      if (ind >= input().C) {
+        break;
       }
+      sum += input().videos[vid];
+      output_.servers[ind].push_back(vid);
+      ++cnt;
+      used[vid] = 1;
     }
-
-    output_.servers.resize(input_.C);
-    for (const auto& [server, videos] : videos_in_server) {
-      for (const auto video : videos) {
-        output_.servers[server].push_back(video);
-      }
-      std::sort(output_.servers[server].begin(), output_.servers[server].end());
+    LOG("cached videos count: " << cnt << "/" << input().V)
+    LOG("free space: " << free_space)
+    for (auto& serv : output_.servers) {
+      sort(serv.begin(), serv.end());
     }
-
     LOG("finished")
   }
 
