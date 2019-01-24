@@ -65,9 +65,11 @@ public:
       parent[0] = {};
       for (auto [score, vid] : ser_to_vid[sid]) {
         int sz = input.videos[vid];
+        /*
         if (used[vid]) {
           continue;
         }
+        */
         bool added = 0;
         for (int i = input.X; i >= 0; --i) {
           int to = input.videos[vid] + i;

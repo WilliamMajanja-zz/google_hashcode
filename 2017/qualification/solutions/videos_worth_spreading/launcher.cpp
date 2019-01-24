@@ -1,5 +1,5 @@
 #include "solution.h"
-#include "../../base/statistics.h"
+#include "../../base/calculate_score.h"
 #include "../../improver/improver.h"
 
 int main() {
