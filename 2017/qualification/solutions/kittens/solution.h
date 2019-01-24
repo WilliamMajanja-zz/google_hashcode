@@ -8,70 +8,100 @@ public:
   KittensSolution(T&&... args):
       Solution(std::forward<T>(args)...) {}
 
-  void solve_internal() override {
+  void solve_internal(const Input& input) override {
     LOG("started")
-
-    std::vector<Request> requests = input_.requests;
-    std::sort(requests.begin(), requests.end(), [](const auto& lhs, const auto& rhs) {
-      return lhs.N > rhs.N;
-    });
-
-    std::vector<int> sizes(input_.C);
-    std::unordered_map<int, std::unordered_set<int>> videos_in_server;
-
-    auto optimize = [&] {
-      bool updated = false;
-
-      for (const auto& request : requests) {
-        const auto& endpoint = input_.endpoints[request.E];
-
-        const auto video_size = input_.videos[request.V];
-
-        std::pair<int, int64_t> best = {-1, 0};
-        for (const auto& [server, latency] : endpoint.connections) {
-          if (videos_in_server[server].count(request.V)) {
-            const auto cur_score = (endpoint.L - latency) * static_cast<int64_t>(request.N);
-            if (best.second < cur_score) {
-              best = {server, cur_score};
-            }
-          }
+    output_.servers.resize(input.C);
+    vector<vector<pair<double, int>>> ser_to_vid(input.C);
+    vector<vector<pair<double, int>>> usr_to_vid(input.E);
+    for (auto req : input.requests) {
+      usr_to_vid[req.E].push_back(mk((double)req.N, req.V));
+    }
+    for (int i = 0; i < input.endpoints.size(); ++i) {
+      auto& usr = input.endpoints[i];
+      for (auto [serv, lat] : usr.connections) {
+        for (auto [num, vid] : usr_to_vid[i]) {
+          ser_to_vid[serv].push_back(
+              mk((double)num * (usr.L - lat), vid));
         }
-        if (best.first == -1) {
-          for (const auto& [server, latency] : endpoint.connections) {
-            if (sizes[server] + video_size <= input_.X) {
-              const auto cur_score = (endpoint.L - latency) * static_cast<int64_t>(request.N);
-              if (best.second < cur_score) {
-                best = {server, cur_score};
-              }
-            }
-          }
-        }
-        if (best.first != -1) {
-          updated = true;
-          if (videos_in_server[best.first].count(request.V) == 0) {
-            videos_in_server[best.first].insert(request.V);
-            sizes[best.first] += video_size;
-          }
-        }
-      }
-
-      return updated;
-    };
-
-    int i = 0;
-    while (optimize()) {
-      LOG("one more optimization cycle")
-      if (i++ > 1) {
-        break;
       }
     }
-
-    output_.servers.resize(input_.C);
-    for (const auto& [server, videos] : videos_in_server) {
-      for (const auto video : videos) {
-        output_.servers[server].push_back(video);
+    for (auto& serv : ser_to_vid) {
+      unordered_map<int, double> qwe;
+      for (auto [score, vid] : serv) {
+        qwe[vid] += score;
       }
-      std::sort(output_.servers[server].begin(), output_.servers[server].end());
+      serv.resize(0);
+      for (auto [vid, score] : qwe) {
+        serv.push_back(mk(score, vid));
+      }
+    }
+    LOG("inited ser_to_vid")
+      /*
+    for (auto& serv : ser_to_vid) {
+      sort(serv.rbegin(), serv.rend());
+    }
+    LOG("sorted ser_to_vid")
+    */
+    vector<int> perm(input.C);
+    for (int i = 0; i < input.C; ++i) {
+      perm[i] = i;
+    }
+    srand(time(0));
+    random_shuffle(perm.begin(), perm.end());
+
+    vector<bool> used(input.V);
+    vector<int> used_sz(input.C);
+
+    vector<double> dp(input.X + 1);
+    vector<int> ts(input.X + 1);
+    vector<vector<int>> parent(input.X + 1);
+    int timer = 1;
+    int cnt = 0;
+    for (auto sid : perm) {
+      LOG("process server: " << sid << " cnt: " << ++cnt << "/" << input.C)
+      ++timer;
+      dp[0] = 0;
+      ts[0] = timer;
+      parent[0] = {};
+      for (auto [score, vid] : ser_to_vid[sid]) {
+        int sz = input.videos[vid];
+        if (used[vid]) {
+          continue;
+        }
+        bool added = 0;
+        for (int i = input.X; i >= 0; --i) {
+          int to = input.videos[vid] + i;
+          if (ts[i] == timer && to <= input.X) {
+            if (ts[to] < timer || dp[to] < dp[i] + score) {
+              ts[to] = timer;
+              dp[to] = dp[i] + score;
+              parent[to] = parent[i];
+              parent[to].push_back(vid);
+              added = 1;
+            }
+          }
+        }
+      }
+      int ind = 0;
+      double maxx = dp[ind];
+      for (int i = 0; i < input.X + 1; ++i) {
+        if (dp[i] > maxx && ts[i] == timer) {
+          ind = i;
+          maxx = dp[i];
+        }
+      }
+      output_.servers[sid].swap(parent[ind]);
+      for (auto vid : output_.servers[sid]) {
+        used[vid] = 1;
+      }
+      LOG(
+          "added videos count: " << output_.servers[sid].size() <<
+          " optimization score: " << maxx <<
+          " free space: " << input.X - ind)
+    }
+
+    for (auto& serv : output_.servers) {
+      sort(serv.begin(), serv.end());
     }
 
     LOG("finished")

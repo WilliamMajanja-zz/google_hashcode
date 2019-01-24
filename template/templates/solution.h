@@ -8,7 +8,7 @@ public:
   <<TestName>>Solution(T&&... args):
       Solution(std::forward<T>(args)...) {}
 
-  void solve_internal() override {
+  void solve_internal(const Input& input) override {
   }
 
 private:
