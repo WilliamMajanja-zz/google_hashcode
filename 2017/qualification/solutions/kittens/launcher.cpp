@@ -2,7 +2,10 @@
 #include "../../base/calculate_score.h"
 #include "../../improver/improver.h"
 
-int main() {
+int main(int argc, char** argv) {
+  LOG("srand: " << atoi(argv[1]))
+  srand(atoi(argv[1]));
+
   auto input = read_input("../../input/kittens.in");
   KittensSolution solution(input);
   solution.solve();
