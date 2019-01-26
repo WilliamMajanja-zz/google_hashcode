@@ -9,12 +9,17 @@
 #include <iostream>
 #include <memory>
 #include <random>
+#include <set>
+#include <sstream>
 #include <thread>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #define X first
 #define Y second
 #define PT pair<int, int>
+#define mk make_pair
 
 using namespace std;
 

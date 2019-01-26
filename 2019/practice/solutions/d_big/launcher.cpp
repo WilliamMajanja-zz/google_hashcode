@@ -5,11 +5,11 @@ int main(int argc, char** argv) {
   LOG("srand: " << atoi(argv[1]))
   srand(atoi(argv[1]));
 
-  auto input = read_input("../../input/example.in");
+  auto input = read_input("../../input/d_big.in");
   Solution solution(input);
   solution.solve();
 
   auto score = calculate_score(solution.input(), solution.output());
   LOG("final score: " << score)
-  print_output(solution.output(), score, "../../output/example/");
+  print_output(solution.output(), score, "../../output/d_big/");
 }

@@ -1,1 +1,1 @@
-zip submission.zip * -x "output/*" "*.log" "*.out" -r
+zip submission.zip * -x "output/*" -r

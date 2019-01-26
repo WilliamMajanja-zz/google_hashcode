@@ -2,19 +2,19 @@
 
 #include "../../base/solution.h"
 
-class ExampleSolution : public Solution {
+class Solution : public BaseSolution {
 public:
-  ExampleSolution():
-    Solution("../../input/a_example.in") {}
+  template <typename... T>
+  Solution(T&&... args):
+      BaseSolution(std::forward<T>(args)...) {}
 
-  void solve_internal() override {
-    output_.sls.push_back(Slice(make_pair(0, 0), make_pair(2, 1)));
-    output_.sls.push_back(Slice(make_pair(0, 2), make_pair(2, 1)));
-    output_.sls.push_back(Slice(make_pair(0, 3), make_pair(2, 3)));
-    LOG("called")
+  void solve_internal(const Input& input, Output& output) override {
+    LOG("started")
+    /* solve test here */
+    LOG("finished")
   }
 
 private:
-  const string class_name_ = "ExampleSolution";
+  const string class_name_ = "Solution";
 };
 

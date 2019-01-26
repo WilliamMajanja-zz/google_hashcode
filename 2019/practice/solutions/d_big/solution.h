@@ -1,34 +1,21 @@
 #pragma once
 
-#include "../../base/statistics.h"
-#include "../../base/async_solution.h"
+#include "../../base/solution.h"
 
-class DiagSolution : public AsyncSolution {
+class Solution : public BaseSolution {
 public:
   template <typename... T>
-  DiagSolution(T&&... args):
-      AsyncSolution(std::forward<T>(args)...) {
-    clog = ofstream("logs/" + to_string(number()) + ".log");
-    field.assign(input().R, vector<bool>(input().C));
-  }
+  Solution(T&&... args):
+      BaseSolution(std::forward<T>(args)...) {}
 
-  ~DiagSolution() = default;
-
-  void solve_internal() override {
-    output_.pointer = input().pointer;
-    init_path();
-
-    for (auto point : path) {
-      for (auto& form : forms) {
-        swap(form.X, form.Y);
-      }
-      for (auto& form : forms) {
-        swap(form.X, form.Y);
-      }
-    }
+  void solve_internal(const Input& input, Output& output) override {
+    LOG("started")
+    field.assign(input.R, vector<bool>(input.C));
+    output_.pointer = input.pointer;
 
     init_path();
 
+    random_shuffle(forms.begin(), forms.end());
     for (auto point : path) {
       try_to_fill(point, true);
       for (auto& form : forms) {
@@ -39,6 +26,7 @@ public:
         swap(form.X, form.Y);
       }
     }
+    LOG("finished")
   }
 
 private:
@@ -155,8 +143,6 @@ private:
   vector<vector<bool>> field;
 
   vector<pair<int, int>> forms{{7, 2}, {14, 1}, {3, 4}, {2, 6}, {12, 1}, {13, 1}};
-
-  const string class_name_ = "DiagSolution";
-  ofstream clog;
+  const string class_name_ = "Solution";
 };
 
