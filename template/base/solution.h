@@ -2,9 +2,9 @@
 
 #include "common.h"
 
-class Solution {
+class BaseSolution {
 public:
-  Solution(const Input& input):
+  BaseSolution(const Input& input):
     input_(input) {}
 
   const auto& input() const { return input_; }
@@ -25,5 +25,5 @@ protected:
   Output output_;
 
 private:
-  const string class_name_ = "AsyncSolution";
+  const string class_name_ = "BaseSolution";
 };
