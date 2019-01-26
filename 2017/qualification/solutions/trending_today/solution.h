@@ -2,20 +2,21 @@
 
 #include "../../base/solution.h"
 
-class TrendingTodaySolution : public Solution {
+class Solution : public BaseSolution {
 public:
   template <typename... T>
-  TrendingTodaySolution(T&&... args):
-      Solution(std::forward<T>(args)...) {}
+  Solution(T&&... args):
+      BaseSolution(std::forward<T>(args)...) {}
 
-  void solve_internal() override {
-    output_.servers.resize(input().C);
+  void solve_internal(const Input& input, Output& output) override {
     LOG("started")
-    vector<PT> videos(input().videos.size());
+output_.servers.resize(input.C);
+    LOG("started")
+    vector<PT> videos(input.videos.size());
     for (int i = 0; i < videos.size(); ++i) {
       videos[i].Y = i;
     }
-    for (auto request : input().requests) {
+    for (auto request : input.requests) {
       videos[request.V].X += request.N;
     }
     LOG("videos inited")
@@ -30,19 +31,19 @@ public:
       if (used[vid]) {
         continue;
       }
-      if (input().videos[vid] + sum > input().X) {
-        auto cur_free_space = input().X - sum;
+      if (input.videos[vid] + sum > input.X) {
+        auto cur_free_space = input.X - sum;
         bool ok = 1;
         while (cur_free_space > 100 && ok) {
           ok = 0;
           for (int i = 0; i < videos.size(); ++i) {
             int j = i;
             if (!used[j]) {
-              if (input().videos[j] <= cur_free_space) {
+              if (input.videos[j] <= cur_free_space) {
                 ok = 1;
-                LOG("added " << input().videos[j])
-                sum += input().videos[j];
-                cur_free_space = input().X - sum;
+                LOG("added " << input.videos[j])
+                sum += input.videos[j];
+                cur_free_space = input.X - sum;
                 output_.servers[ind].push_back(j);
                 ++cnt;
                 used[j] = 1;
@@ -56,15 +57,15 @@ public:
         sum = 0;
         ++ind;
       }
-      if (ind >= input().C) {
+      if (ind >= input.C) {
         break;
       }
-      sum += input().videos[vid];
+      sum += input.videos[vid];
       output_.servers[ind].push_back(vid);
       ++cnt;
       used[vid] = 1;
     }
-    LOG("cached videos count: " << cnt << "/" << input().V)
+    LOG("cached videos count: " << cnt << "/" << input.V)
     LOG("free space: " << free_space)
     for (auto& serv : output_.servers) {
       sort(serv.begin(), serv.end());
@@ -73,6 +74,6 @@ public:
   }
 
 private:
-  const string class_name_ = "TrendingTodaySolution";
+  const string class_name_ = "Solution";
 };
 

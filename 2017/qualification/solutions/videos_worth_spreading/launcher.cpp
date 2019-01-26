@@ -1,21 +1,15 @@
 #include "solution.h"
 #include "../../base/calculate_score.h"
-#include "../../improver/improver.h"
 
-int main() {
+int main(int argc, char** argv) {
+  LOG("srand: " << atoi(argv[1]))
+  srand(atoi(argv[1]));
+
   auto input = read_input("../../input/videos_worth_spreading.in");
-  VWSSolution solution(input);
+  Solution solution(input);
   solution.solve();
 
   auto score = calculate_score(solution.input(), solution.output());
-  LOG("videos_worth_spreading score: " << score)
+  LOG("final score: " << score)
   print_output(solution.output(), score, "../../output/videos_worth_spreading/");
-
-  auto improving_result = Improver::improve(solution.input(), solution.output());
-  while (improving_result.Y) {
-    improving_result = Improver::improve(solution.input(), move(improving_result.X));
-  }
-  auto improved_score = calculate_score(solution.input(), improving_result.X);
-  print_output(improving_result.X, improved_score, "../../output/videos_worth_spreading/");
-  LOG("videos_worth_spreading improved score: " << improved_score)
 }

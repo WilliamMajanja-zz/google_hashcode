@@ -2,13 +2,13 @@
 
 #include "../../base/solution.h"
 
-class KittensSolution : public Solution {
+class Solution : public BaseSolution {
 public:
   template <typename... T>
-  KittensSolution(T&&... args):
-      Solution(std::forward<T>(args)...) {}
+  Solution(T&&... args):
+      BaseSolution(std::forward<T>(args)...) {}
 
-  void solve_internal(const Input& input) override {
+  void solve_internal(const Input& input, Output& output) override {
     LOG("started")
     output_.servers.resize(input.C);
     vector<vector<pair<double, int>>> ser_to_vid(input.C);
@@ -107,6 +107,6 @@ public:
   }
 
 private:
-  const string class_name_ = "KittensSolution";
+  const string class_name_ = "Solution";
 };
 

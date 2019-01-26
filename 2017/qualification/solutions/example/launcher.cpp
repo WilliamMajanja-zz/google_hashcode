@@ -1,27 +1,15 @@
 #include "solution.h"
-#include "split_and_merge.h"
-#include "../../base/solution_manager.h"
-#include "../../base/statistics.h"
-#include "../../improver/improver.h"
+#include "../../base/calculate_score.h"
 
-int main() {
-  SolutionManager<
-    ExampleSolution,
-    ExampleSplitAndMerge
-  > manager("../../input/input.txt");
-  manager.init_solutions();
-  manager.run_solutions();
-  manager.merge_output();
+int main(int argc, char** argv) {
+  LOG("srand: " << atoi(argv[1]))
+  srand(atoi(argv[1]));
 
-  auto score = calculate_score(manager.input(), manager.output());
-  LOG("example score: " << score)
-  print_output(manager.output(), score, "../../output/example/");
+  auto input = read_input("../../input/example.in");
+  Solution solution(input);
+  solution.solve();
 
-  auto improving_result = Improver::improve(manager.input(), manager.output());
-  while (improving_result.Y) {
-    improving_result = Improver::improve(manager.input(), move(improving_result.X));
-  }
-  auto improved_score = calculate_score(manager.input(), improving_result.X);
-  print_output(improving_result.X, improved_score, "../../output/example/");
-  LOG("example improved score: " << improved_score)
+  auto score = calculate_score(solution.input(), solution.output());
+  LOG("final score: " << score)
+  print_output(solution.output(), score, "../../output/example/");
 }

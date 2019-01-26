@@ -2,13 +2,13 @@
 
 #include "../../base/solution.h"
 
-class VWSSolution : public Solution {
+class Solution : public BaseSolution {
 public:
   template <typename... T>
-  VWSSolution(T&&... args):
-      Solution(std::forward<T>(args)...) {}
+  Solution(T&&... args):
+      BaseSolution(std::forward<T>(args)...) {}
 
-  void solve_internal(const Input& input) override {
+  void solve_internal(const Input& input, Output& output) override {
     LOG("started")
     output_.servers.resize(input.C);
     vector<vector<pair<double, int>>> ser_to_vid(input.C);
@@ -46,10 +46,8 @@ public:
     for (int i = 0; i < input.C; ++i) {
       perm[i] = i;
     }
-    srand(time(0));
     random_shuffle(perm.begin(), perm.end());
 
-    vector<bool> used(input.V);
     vector<int> used_sz(input.C);
 
     vector<double> dp(input.X + 1);
@@ -65,11 +63,6 @@ public:
       parent[0] = {};
       for (auto [score, vid] : ser_to_vid[sid]) {
         int sz = input.videos[vid];
-        /*
-        if (used[vid]) {
-          continue;
-        }
-        */
         bool added = 0;
         for (int i = input.X; i >= 0; --i) {
           int to = input.videos[vid] + i;
@@ -93,9 +86,6 @@ public:
         }
       }
       output_.servers[sid].swap(parent[ind]);
-      for (auto vid : output_.servers[sid]) {
-        used[vid] = 1;
-      }
       LOG(
           "added videos count: " << output_.servers[sid].size() <<
           " optimization score: " << maxx <<
@@ -105,11 +95,10 @@ public:
     for (auto& serv : output_.servers) {
       sort(serv.begin(), serv.end());
     }
-
     LOG("finished")
   }
 
 private:
-  const string class_name_ = "VWSSolution";
+  const string class_name_ = "Solution";
 };
 
