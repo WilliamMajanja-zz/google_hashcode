@@ -14,12 +14,12 @@ public:
 
   void solve() {
     LOG("started")
-    solve_internal(input());
+    solve_internal(input_, output_);
     LOG("finished")
   }
 
 protected:
-  virtual void solve_internal(const Input& input) = 0;
+  virtual void solve_internal(const Input& input, Output& output) = 0;
 
   const Input& input_;
   Output output_;

@@ -8,7 +8,7 @@ public:
   Solution(T&&... args):
       BaseSolution(std::forward<T>(args)...) {}
 
-  void solve_internal(const Input& input) override {
+  void solve_internal(const Input& input, Output& output) override {
     LOG("started")
     /* solve test here */
     LOG("finished")
