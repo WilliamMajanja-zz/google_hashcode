@@ -33,7 +33,7 @@ using namespace std;
 string class_name_;
 bool enable_logging = true;
 
-struct shop {
+struct Shop {
   int row;
   int col;
   vector<int> number_of_items;
@@ -53,7 +53,7 @@ struct Input {
   int max_load;
 
   vector<int> items;
-  vector<shop> shops;
+  vector<Shop> shops;
   vector<Order> orders;
 };
 
