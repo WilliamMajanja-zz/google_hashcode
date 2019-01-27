@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include <variant>
 
 #define X first
 #define Y second
@@ -30,8 +31,36 @@ struct Input {
   /* input structure here */
 };
 
+struct Store {
+  int DroneId;
+  int Warehouse;
+  int ProductId;
+  int NumberOfItems;
+};
+
+struct LoadCmd : public Store {
+};
+
+struct UnloadCmd : public Store {
+};
+
+struct DeliverCmd {
+  int DroneId;
+  int CustomerId;
+  int ProductId;
+  int NumberOfItems;
+};
+
+struct WaitCmd {
+  int DroneId;
+  int NumberOfTurns;
+};
+
+using Command = std::variant<LoadCmd, UnloadCmd, DeliverCmd, WaitCmd>;
+
 struct Output {
-  /* output structure here */
+  int Q;
+  std::vector<Command> Commands;
 };
 
 inline Input read_input(const std::string& fname) {
