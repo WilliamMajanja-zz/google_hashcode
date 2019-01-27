@@ -102,6 +102,10 @@ public:
           int left_load = state.max_load - state.items[product_id] * can_deliver;
           for (const auto [product_id1, _cnt1] : needed_order) {
             int cnt1 = needed[product_id1];
+            // do not iterate if we have not left load
+            if (left_load <= 0) {
+              break;
+            }
             // do not try to take the same product
             if (product_id1 == product_id) {
               continue;
@@ -109,6 +113,7 @@ public:
             if (cnt1 <= 0 || state.shops[shop_id].number_of_items[product_id1] <= 0) {
               continue;
             }
+            // we only need to load + unload this item, do not add distance to cost
             if (drones[drone_id].turn + 2 > input.deadline) {
               continue;
             }
