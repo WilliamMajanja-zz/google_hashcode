@@ -172,6 +172,58 @@ inline Output read_output(const std::string& fname) {
   ifstream in_f(fname);
   Output out;
   /* read input here */
+  in_f >> out.q;
+  for (size_t i = 0; i < out.q; ++i) {
+    std::string line;
+    std::getline(in_f, line);
+
+    std::stringstream ss(line);
+
+    int drone_id;
+    ss >> drone_id;
+
+    char cmd_type;
+    ss >> cmd_type;
+
+    switch (cmd_type) {
+    case 'L': {
+      LoadCmd cmd;
+      cmd.drone_id = drone_id;
+      ss >> cmd.shop_id;
+      ss >> cmd.product_id;
+      ss >> cmd.number_of_items;
+      out.commands.emplace_back(std::move(cmd));
+      break;
+    }
+    case 'U': {
+      UnloadCmd cmd;
+      cmd.drone_id = drone_id;
+      ss >> cmd.shop_id;
+      ss >> cmd.product_id;
+      ss >> cmd.number_of_items;
+      out.commands.emplace_back(std::move(cmd));
+      break;
+    }
+    case 'D': {
+      DeliverCmd cmd;
+      cmd.drone_id = drone_id;
+      ss >> cmd.order_id;
+      ss >> cmd.product_id;
+      ss >> cmd.number_of_items;
+      out.commands.emplace_back(std::move(cmd));
+      break;
+    }
+    case 'W': {
+      WaitCmd cmd;
+      cmd.drone_id = drone_id;
+      ss >> cmd.number_of_turns;
+      out.commands.emplace_back(std::move(cmd));
+      break;
+    }
+    default:
+      assert(false && "unexpected cmd_type in read output");
+    }
+  }
   return out;
 }
 
