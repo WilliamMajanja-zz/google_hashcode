@@ -43,14 +43,14 @@ public:
         return lhs.second > rhs.second;
       });
 
-      for (auto [product_id, cnt] : needed_order) {
+      for (auto [product_id, _cnt] : needed_order) {
+        int cnt = needed[product_id];
         while (cnt > 0) {
           // cost, drone_id, shop_id
           std::tuple<int, int, int> min_turn{std::numeric_limits<int>::max(), -1, -1};
 
           for (size_t drone_id = 0; drone_id < drones.size(); ++drone_id) {
-            auto& drone = drones[drone_id];
-
+            auto& drone = drones[drone_id]; 
             // cost, shop_id
             std::pair<int, int> min_turn_for_drone = {std::numeric_limits<int>::max(), -1};
             for (size_t shop_id = 0; shop_id < state.shops.size(); ++shop_id) {
@@ -75,7 +75,7 @@ public:
             }
           }
 
-          auto [cost, drone_id, shop_id] = min_turn;
+          const auto [cost, drone_id, shop_id] = min_turn;
 
           if (shop_id == -1) {
             break;
@@ -95,9 +95,51 @@ public:
           output.commands.emplace_back(
             LoadCmd(drone_id, shop_id, product_id, can_deliver)
           );
-          output.commands.emplace_back(
+
+          std::vector<Command> deliver_cmds;
+
+          // try to add aditional items from same order and same shop if have left load
+          int left_load = state.max_load - state.items[product_id] * can_deliver;
+          for (const auto [product_id1, _cnt1] : needed_order) {
+            int cnt1 = needed[product_id1];
+            // do not try to take the same product
+            if (product_id1 == product_id) {
+              continue;
+            }
+            if (cnt1 <= 0 || state.shops[shop_id].number_of_items[product_id1] <= 0) {
+              continue;
+            }
+            if (drones[drone_id].turn + 2 > input.deadline) {
+              continue;
+            }
+
+            int can_deliver1 = std::min(cnt1, left_load / state.items[product_id1]);
+            can_deliver1 = std::min(can_deliver1, state.shops[shop_id].number_of_items[product_id1]);
+
+            if (can_deliver1 > 0) {
+              drones[drone_id].turn += 2;
+
+              needed[product_id1] -= can_deliver1;
+              state.shops[shop_id].number_of_items[product_id1] -= can_deliver1;
+
+              left_load -= state.items[product_id1] * can_deliver1;
+
+              output.q += 2;
+              output.commands.emplace_back(
+                LoadCmd(drone_id, shop_id, product_id1, can_deliver1)
+              );
+
+              deliver_cmds.emplace_back(
+                DeliverCmd(drone_id, order.id, product_id1, can_deliver1)
+              );
+            }
+          }
+
+          deliver_cmds.emplace_back(
             DeliverCmd(drone_id, order.id, product_id, can_deliver)
           );
+
+          output.commands.insert(output.commands.end(), deliver_cmds.begin(), deliver_cmds.end());
         }
       }
     }
