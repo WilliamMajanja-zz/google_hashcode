@@ -92,13 +92,13 @@ struct UnloadCmd : public Cmd {
 
 struct DeliverCmd : public Cmd {
   int drone_id;
-  int customer_id;
+  int order_id;
   int product_id;
   int number_of_items;
 
   std::string to_string() const override {
     std::stringstream ss;
-    ss << drone_id << " D "  << customer_id << " " << product_id << " " << number_of_items;
+    ss << drone_id << " D "  << order_id << " " << product_id << " " << number_of_items;
     return ss.str();
   }
 };
@@ -179,5 +179,9 @@ inline void print_output(const Output& output, size_t score, const std::string& 
   auto fname = fpath + to_string(score) + ".ans";
   fstream out_f(fname, fstream::out);
   /* print output here */
+  out_f << output.q << std::endl;
+  for (const auto& command : output.commands) {
+    std::visit([&out_f](auto&& cmd) { out_f << cmd.to_string() << std::endl; }, command);
+  }
   LOG("output has been printed to file: " << fname)
 }
