@@ -51,29 +51,61 @@ struct Input {
   vector<Order> orders;
 };
 
-struct Store {
+struct Cmd {
+  virtual ~Cmd() {}
+  virtual std::string to_string() const {
+    return "empty cmd";
+  }
+};
+
+struct LoadCmd : public Cmd {
   int drone_id;
   int warehouse_id;
   int product_id;
-  int number_of_Items;
+  int number_of_items;
+
+  std::string to_string() const override {
+    std::stringstream ss;
+    ss << drone_id << " L "  << warehouse_id << " " << product_id << " " << number_of_items;
+    return ss.str();
+  }
 };
 
-struct LoadCmd : public Store {
+struct UnloadCmd : public Cmd {
+  int drone_id;
+  int warehouse_id;
+  int product_id;
+  int number_of_items;
+
+  std::string to_string() const override {
+    std::stringstream ss;
+    ss << drone_id << " U "  << warehouse_id << " " << product_id << " " << number_of_items;
+    return ss.str();
+  }
 };
 
-struct UnloadCmd : public Store {
-};
-
-struct DeliverCmd {
+struct DeliverCmd : public Cmd {
   int drone_id;
   int customer_id;
   int product_id;
   int number_of_items;
+
+  std::string to_string() const override {
+    std::stringstream ss;
+    ss << drone_id << " D "  << customer_id << " " << product_id << " " << number_of_items;
+    return ss.str();
+  }
 };
 
-struct WaitCmd {
+struct WaitCmd : public Cmd {
   int drone_id;
   int number_of_turns;
+
+  std::string to_string() const override {
+    std::stringstream ss;
+    ss << drone_id << " W "  << number_of_turns;
+    return ss.str();
+  }
 };
 
 using Command = std::variant<LoadCmd, UnloadCmd, DeliverCmd, WaitCmd>;
