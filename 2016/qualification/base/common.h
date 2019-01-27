@@ -22,12 +22,18 @@
 #define PT pair<int, int>
 #define mk make_pair
 
+#define R n_rows
+#define C n_cols
+#define D n_drones
+#define T deadline
+#define SZ max_load
+
 using namespace std;
 
 string class_name_;
 bool enable_logging = true;
 
-struct Warehouse {
+struct shop {
   int row;
   int col;
   vector<int> number_of_items;
@@ -46,8 +52,8 @@ struct Input {
   int deadline;
   int max_load;
 
-  vector<int> order_weights;
-  vector<Warehouse> warehouses;
+  vector<int> items;
+  vector<shop> shops;
   vector<Order> orders;
 };
 
@@ -60,26 +66,26 @@ struct Cmd {
 
 struct LoadCmd : public Cmd {
   int drone_id;
-  int warehouse_id;
+  int shop_id;
   int product_id;
   int number_of_items;
 
   std::string to_string() const override {
     std::stringstream ss;
-    ss << drone_id << " L "  << warehouse_id << " " << product_id << " " << number_of_items;
+    ss << drone_id << " L "  << shop_id << " " << product_id << " " << number_of_items;
     return ss.str();
   }
 };
 
 struct UnloadCmd : public Cmd {
   int drone_id;
-  int warehouse_id;
+  int shop_id;
   int product_id;
   int number_of_items;
 
   std::string to_string() const override {
     std::stringstream ss;
-    ss << drone_id << " U "  << warehouse_id << " " << product_id << " " << number_of_items;
+    ss << drone_id << " U "  << shop_id << " " << product_id << " " << number_of_items;
     return ss.str();
   }
 };
@@ -128,19 +134,19 @@ inline Input read_input(const std::string& fname) {
   int P;
   in_f >> P;
   LOG("Number of different product types: " << P);
-  in.order_weights.resize(P);
-  for (int& weight : in.order_weights) {
+  in.items.resize(P);
+  for (int& weight : in.items) {
     in_f >> weight;
   }
 
   int W;
   in_f >> W;
-  LOG("Number of warehouses: " << W);
-  in.warehouses.resize(W);
-  for (Warehouse& warehouse : in.warehouses) {
-    in_f >> warehouse.row >> warehouse.col;
-    warehouse.number_of_items.resize(P);
-    for (int& num_of_item : warehouse.number_of_items) {
+  LOG("Number of shops: " << W);
+  in.shops.resize(W);
+  for (shop& shop : in.shops) {
+    in_f >> shop.row >> shop.col;
+    shop.number_of_items.resize(P);
+    for (int& num_of_item : shop.number_of_items) {
       in_f >> num_of_item;
     }
   }
