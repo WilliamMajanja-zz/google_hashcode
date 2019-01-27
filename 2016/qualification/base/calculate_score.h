@@ -72,6 +72,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
             const Postion order_pos = {order.row, order.col};
 
             total_turns += get_distance(pos, order_pos) + 1;
+            pos = order_pos;
 
             load -= input.items[cmd.product_id] * cmd.number_of_items;
 
