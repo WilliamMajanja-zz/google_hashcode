@@ -52,10 +52,10 @@ struct Input {
 };
 
 struct Store {
-  int DroneId;
-  int Warehouse;
-  int ProductId;
-  int NumberOfItems;
+  int drone_id;
+  int warehouse_id;
+  int product_id;
+  int number_of_Items;
 };
 
 struct LoadCmd : public Store {
@@ -65,22 +65,22 @@ struct UnloadCmd : public Store {
 };
 
 struct DeliverCmd {
-  int DroneId;
-  int CustomerId;
-  int ProductId;
-  int NumberOfItems;
+  int drone_id;
+  int customer_id;
+  int product_id;
+  int number_of_items;
 };
 
 struct WaitCmd {
-  int DroneId;
-  int NumberOfTurns;
+  int drone_id;
+  int number_of_turns;
 };
 
 using Command = std::variant<LoadCmd, UnloadCmd, DeliverCmd, WaitCmd>;
 
 struct Output {
-  int Q;
-  std::vector<Command> Commands;
+  int q;
+  std::vector<Command> commands;
 };
 
 inline Input read_input(const std::string& fname) {
