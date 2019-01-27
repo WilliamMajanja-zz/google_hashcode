@@ -116,6 +116,10 @@ struct WaitCmd : public Cmd {
 
 using Command = std::variant<LoadCmd, UnloadCmd, DeliverCmd, WaitCmd>;
 
+std::string to_string(const Command& command) {
+  return std::visit([](auto&& cmd) -> std::string { return cmd.to_string(); }, command);
+}
+
 struct Output {
   int q;
   std::vector<Command> commands;
