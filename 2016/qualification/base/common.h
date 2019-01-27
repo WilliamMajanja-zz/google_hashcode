@@ -10,6 +10,7 @@
 #include <memory>
 #include <random>
 #include <set>
+#include <map>
 #include <sstream>
 #include <thread>
 #include <unordered_map>
@@ -43,6 +44,9 @@ struct Order {
   int row;
   int col;
   vector<int> product_items;
+
+  int sz_left;
+  int id;
 };
 
 struct Input {
@@ -155,6 +159,7 @@ inline Input read_input(const std::string& fname) {
   in_f >> C;
   LOG("Number of orders: " << C);
   in.orders.resize(C);
+  int id = 0;
   for (Order& order : in.orders) {
     in_f >> order.row >> order.col;
     int L;
@@ -162,7 +167,9 @@ inline Input read_input(const std::string& fname) {
     order.product_items.resize(L);
     for (int& product_item_type : order.product_items) {
       in_f >> product_item_type;
+      order.sz_left += in.items[product_item_type];
     }
+    order.id = id++;
   }
 
   return in;
@@ -234,4 +241,8 @@ inline void print_output(const Output& output, size_t score, const std::string& 
     std::visit([&out_f](auto&& cmd) { out_f << cmd.to_string() << std::endl; }, command);
   }
   LOG("output has been printed to file: " << fname)
+}
+
+double calc_dist(PT a, PT b) {
+  return hypot(a.X - b.X, a.Y - b.Y);
 }
