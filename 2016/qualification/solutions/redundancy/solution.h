@@ -38,7 +38,12 @@ public:
         ++needed[product];
       }
 
-      for (auto [product_id, cnt] : needed) {
+      std::vector<std::pair<int, int>> needed_order(needed.begin(), needed.end());
+      std::sort(needed_order.begin(), needed_order.end(), [](const auto& lhs, const auto& rhs) {
+        return lhs.second > rhs.second;
+      });
+
+      for (auto [product_id, cnt] : needed_order) {
         while (cnt > 0) {
           // cost, drone_id, shop_id
           std::tuple<int, int, int> min_turn{std::numeric_limits<int>::max(), -1, -1};
@@ -60,7 +65,6 @@ public:
               // load + deliver + distances
               const int cost = get_distance(drone.pos, shop_pos) + get_distance(shop_pos, order_pos) + 2;
 
-              // +100 is magic const
               if (min_turn_for_drone.first > cost && drone.turn + cost + 100 <= input.deadline) {
                 min_turn_for_drone = {cost, shop_id};
               }
