@@ -28,7 +28,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
   std::unordered_map<int, std::vector<Command>> drone_commands;
 
   for (const auto& command : output.commands) {
-    int drone_id = std::visit([](auto&& cmd) -> int { return cmd.drone_id; }, command);
+    const int drone_id = std::visit([](auto&& cmd) -> int { return cmd.drone_id; }, command);
     drone_commands[drone_id].emplace_back(command);
   }
 
@@ -38,7 +38,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
     int total_turns = 0;
     int load = 0;
 
-    std::pair<int, int> pos = {input.shops[0].row, input.shops[0].col};
+    Postion pos = {input.shops[0].row, input.shops[0].col};
     std::unordered_map<int, int> products_cnt;
 
     for (const auto& command : commands) {
