@@ -171,7 +171,6 @@ inline Input read_input(const std::string& fname) {
 inline Output read_output(const std::string& fname) {
   ifstream in_f(fname);
   Output out;
-  /* read input here */
   in_f >> out.q;
   for (size_t i = 0; i < out.q; ++i) {
     std::string line;
@@ -230,7 +229,6 @@ inline Output read_output(const std::string& fname) {
 inline void print_output(const Output& output, size_t score, const std::string& fpath = "./") {
   auto fname = fpath + to_string(score) + ".ans";
   fstream out_f(fname, fstream::out);
-  /* print output here */
   out_f << output.q << std::endl;
   for (const auto& command : output.commands) {
     std::visit([&out_f](auto&& cmd) { out_f << cmd.to_string() << std::endl; }, command);
