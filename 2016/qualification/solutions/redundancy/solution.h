@@ -63,9 +63,9 @@ public:
               const Position shop_pos = {shop.row, shop.col};
 
               // load + deliver + distances
-              const int cost = get_distance(drone.pos, shop_pos) + get_distance(shop_pos, order_pos) + 2;
+              const int cost = get_distance(drone.pos, shop_pos) + get_distance(shop_pos, order_pos) + 3;
 
-              if (min_turn_for_drone.first > cost && drone.turn + cost + 100 <= input.deadline) {
+              if (min_turn_for_drone.first > cost && drone.turn + cost <= input.deadline) {
                 min_turn_for_drone = {cost, shop_id};
               }
             }
