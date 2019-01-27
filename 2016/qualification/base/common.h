@@ -242,7 +242,7 @@ inline void print_output(const Output& output, size_t score, const std::string& 
   fstream out_f(fname, fstream::out);
   out_f << output.q << std::endl;
   for (const auto& command : output.commands) {
-    std::visit([&out_f](auto&& cmd) { out_f << cmd.to_string() << std::endl; }, command);
+    out_f << to_string(command) << std::endl;
   }
   LOG("output has been printed to file: " << fname)
 }
