@@ -11,13 +11,13 @@ namespace NPrivate {
 
 } // NPrivate
 
-using Postion = std::pair<int, int>;
+using Position = std::pair<int, int>;
 
 int64_t sqr(int64_t a) {
   return a * a;
 }
 
-int get_distance(Postion lhs, Postion rhs) {
+int get_distance(Position lhs, Position rhs) {
   return static_cast<int>(std::ceil(
     std::sqrt(sqr(lhs.first - rhs.first) + sqr(lhs.second - rhs.second))));
 }
@@ -40,7 +40,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
     int total_turns = 0;
     int load = 0;
 
-    Postion pos = {input_copy.shops[0].row, input_copy.shops[0].col};
+    Position pos = {input_copy.shops[0].row, input_copy.shops[0].col};
     std::unordered_map<int, int> products_cnt;
 
     for (const auto& command : commands) {
@@ -48,7 +48,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
           using T = std::decay_t<decltype(cmd)>;
           if constexpr (std::is_same_v<T, LoadCmd>) {
             const auto& shop = input_copy.shops[cmd.shop_id];
-            const Postion shop_pos = {shop.row, shop.col};
+            const Position shop_pos = {shop.row, shop.col};
 
             total_turns += get_distance(pos, shop_pos) + 1;
             pos = shop_pos;
@@ -62,7 +62,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
             assert((input_copy.shops[cmd.shop_id].number_of_items[cmd.product_id] >= 0) && "can't load more than shop have");
           } else if constexpr (std::is_same_v<T, UnloadCmd>) {
             const auto& shop = input_copy.shops[cmd.shop_id];
-            const Postion shop_pos = {shop.row, shop.col};
+            const Position shop_pos = {shop.row, shop.col};
 
             total_turns += get_distance(pos, shop_pos) + 1;
             pos = shop_pos;
@@ -75,7 +75,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
             input_copy.shops[cmd.shop_id].number_of_items[cmd.product_id] += cmd.number_of_items;
           } else if constexpr (std::is_same_v<T, DeliverCmd>) {
             const auto& order = input_copy.orders[cmd.order_id];
-            const Postion order_pos = {order.row, order.col};
+            const Position order_pos = {order.row, order.col};
 
             total_turns += get_distance(pos, order_pos) + 1;
             pos = order_pos;
