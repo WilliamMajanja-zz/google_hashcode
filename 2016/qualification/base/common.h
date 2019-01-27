@@ -143,7 +143,7 @@ inline Input read_input(const std::string& fname) {
   in_f >> W;
   LOG("Number of shops: " << W);
   in.shops.resize(W);
-  for (shop& shop : in.shops) {
+  for (Shop& shop : in.shops) {
     in_f >> shop.row >> shop.col;
     shop.number_of_items.resize(P);
     for (int& num_of_item : shop.number_of_items) {
