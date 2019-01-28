@@ -75,18 +75,22 @@ public:
 
       for (auto [product_id, _cnt] : needed_order) {
         int cnt = needed[product_id];
+
         while (cnt > 0) {
           // cost, drone_id, shop_id
           std::tuple<int, int, int> min_turn = {std::numeric_limits<int>::max(), -1, -1};
 
+          const int max_items = std::min(cnt, state.max_load / state.items[product_id]);
+
           for (size_t drone_id = 0; drone_id < drones.size(); ++drone_id) {
-            auto& drone = drones[drone_id]; 
-            // cost, shop_id
-            std::pair<int, int> min_turn_for_drone = {std::numeric_limits<int>::max(), -1};
+            auto& drone = drones[drone_id];
+            // cost, shop_id, items_cnt
+            std::tuple<int, int, int> min_turn_for_drone = {std::numeric_limits<int>::max(), -1, std::numeric_limits<int>::max()};
             for (size_t shop_id = 0; shop_id < state.shops.size(); ++shop_id) {
               auto& shop = state.shops[shop_id];
 
-              if (shop.number_of_items[product_id] == 0) {
+              const int number_of_items = shop.number_of_items[product_id];
+              if (number_of_items < max_items) {
                 continue;
               }
 
@@ -95,13 +99,21 @@ public:
               // load + deliver + distances
               const int cost = get_distance(drone.pos, shop_pos) + get_distance(shop_pos, order_pos) + 3;
 
-              if (min_turn_for_drone.first > cost && drone.turn + cost <= input.deadline) {
-                min_turn_for_drone = {cost, shop_id};
+              if (drone.turn + cost > input.deadline) {
+                continue;
+              }
+
+              if (std::get<0>(min_turn_for_drone) > cost) {
+                min_turn_for_drone = {cost, shop_id, number_of_items};
+              } else if (std::get<0>(min_turn_for_drone) == cost) {
+                if (std::get<2>(min_turn_for_drone) > number_of_items) {
+                   min_turn_for_drone = {cost, shop_id, number_of_items};
+                }
               }
             }
 
-            if (std::get<0>(min_turn) > min_turn_for_drone.first) {
-              min_turn = {min_turn_for_drone.first, drone_id, min_turn_for_drone.second};
+            if (std::get<0>(min_turn) > std::get<0>(min_turn_for_drone)) {
+              min_turn = {std::get<0>(min_turn_for_drone), drone_id, std::get<1>(min_turn_for_drone)};
             }
           }
 
@@ -111,9 +123,7 @@ public:
             break;
           }
 
-          int can_deliver = std::min(cnt, state.max_load / state.items[product_id]);
-          can_deliver = std::min(can_deliver, state.shops[shop_id].number_of_items[product_id]);
-
+          const int can_deliver = max_items;
           cnt -= can_deliver;
           needed[product_id] -= can_deliver;
           state.shops[shop_id].number_of_items[product_id] -= can_deliver;
