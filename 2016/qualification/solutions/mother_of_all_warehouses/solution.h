@@ -158,7 +158,7 @@ public:
         bad_orders.erase(mk(sz, order));
       }
       drones.emplace(tnow, drone);
-      auto score = calculate_score(input, output);
+      auto score = calculate_score(input, output, false);
       LOG("current score: " << score)
       print_output(output, score, "../../output/mother_of_all_warehouses/");
     }
