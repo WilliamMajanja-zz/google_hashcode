@@ -21,8 +21,38 @@ public:
     Input state = input;
 
     auto& orders = state.orders;
-    std::sort(orders.begin(), orders.end(), [](const auto& lhs, const auto& rhs) {
-      return lhs.product_items.size() < rhs.product_items.size();
+
+    auto find_sum_of_closest = [&input](const auto& order) {
+      const Position order_pos = {order.row, order.col};
+
+      std::unordered_set<int> needed;
+      for (const auto product : order.product_items) {
+        needed.insert(product);
+      }
+
+      int64_t res = std::numeric_limits<int64_t>::min();
+      for (const auto product_id : needed) {
+        int64_t closest_shop = std::numeric_limits<int64_t>::max();
+        for (const auto shop : input.shops) {
+          const Position shop_pos = {shop.row, shop.col};
+          if (shop.number_of_items[product_id] > 0) {
+            closest_shop = std::min<int64_t>(closest_shop, get_distance(order_pos, shop_pos));
+          }
+        }
+        assert(closest_shop != std::numeric_limits<int64_t>::max());
+        res = std::max(res, closest_shop);
+      }
+      return res;
+    };
+    std::unordered_map<int, int64_t> closest_shop;
+    for (size_t i = 0; i < orders.size(); ++i) {
+      closest_shop[i] = find_sum_of_closest(orders[i]);
+    }
+    std::sort(orders.begin(), orders.end(), [&closest_shop](const auto& lhs, const auto& rhs) {
+      if (lhs.product_items.size() != rhs.product_items.size()) {
+        return lhs.product_items.size() < rhs.product_items.size();
+      }
+      return closest_shop.at(lhs.id) > closest_shop.at(rhs.id);
     });
 
     std::vector<DroneInfo> drones(input.n_drones);
@@ -45,18 +75,22 @@ public:
 
       for (auto [product_id, _cnt] : needed_order) {
         int cnt = needed[product_id];
+
         while (cnt > 0) {
           // cost, drone_id, shop_id
-          std::tuple<int, int, int> min_turn{std::numeric_limits<int>::max(), -1, -1};
+          std::tuple<int, int, int> min_turn = {std::numeric_limits<int>::max(), -1, -1};
+
+          const int max_items = std::min(cnt, state.max_load / state.items[product_id]);
 
           for (size_t drone_id = 0; drone_id < drones.size(); ++drone_id) {
-            auto& drone = drones[drone_id]; 
-            // cost, shop_id
-            std::pair<int, int> min_turn_for_drone = {std::numeric_limits<int>::max(), -1};
+            auto& drone = drones[drone_id];
+            // cost, shop_id, items_cnt
+            std::tuple<int, int, int> min_turn_for_drone = {std::numeric_limits<int>::max(), -1, std::numeric_limits<int>::max()};
             for (size_t shop_id = 0; shop_id < state.shops.size(); ++shop_id) {
               auto& shop = state.shops[shop_id];
 
-              if (shop.number_of_items[product_id] == 0) {
+              const int number_of_items = shop.number_of_items[product_id];
+              if (number_of_items < max_items) {
                 continue;
               }
 
@@ -65,13 +99,21 @@ public:
               // load + deliver + distances
               const int cost = get_distance(drone.pos, shop_pos) + get_distance(shop_pos, order_pos) + 3;
 
-              if (min_turn_for_drone.first > cost && drone.turn + cost <= input.deadline) {
-                min_turn_for_drone = {cost, shop_id};
+              if (drone.turn + cost > input.deadline) {
+                continue;
+              }
+
+              if (std::get<0>(min_turn_for_drone) > cost) {
+                min_turn_for_drone = {cost, shop_id, number_of_items};
+              } else if (std::get<0>(min_turn_for_drone) == cost) {
+                if (std::get<2>(min_turn_for_drone) > number_of_items) {
+                   min_turn_for_drone = {cost, shop_id, number_of_items};
+                }
               }
             }
 
-            if (std::get<0>(min_turn) > min_turn_for_drone.first) {
-              min_turn = {min_turn_for_drone.first, drone_id, min_turn_for_drone.second};
+            if (std::get<0>(min_turn) > std::get<0>(min_turn_for_drone)) {
+              min_turn = {std::get<0>(min_turn_for_drone), drone_id, std::get<1>(min_turn_for_drone)};
             }
           }
 
@@ -81,9 +123,7 @@ public:
             break;
           }
 
-          int can_deliver = std::min(cnt, state.max_load / state.items[product_id]);
-          can_deliver = std::min(can_deliver, state.shops[shop_id].number_of_items[product_id]);
-
+          const int can_deliver = max_items;
           cnt -= can_deliver;
           needed[product_id] -= can_deliver;
           state.shops[shop_id].number_of_items[product_id] -= can_deliver;
