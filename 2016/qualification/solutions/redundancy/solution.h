@@ -21,8 +21,38 @@ public:
     Input state = input;
 
     auto& orders = state.orders;
-    std::sort(orders.begin(), orders.end(), [](const auto& lhs, const auto& rhs) {
-      return lhs.product_items.size() < rhs.product_items.size();
+
+    auto find_sum_of_closest = [&input](const auto& order) {
+      const Position order_pos = {order.row, order.col};
+
+      std::unordered_set<int> needed;
+      for (const auto product : order.product_items) {
+        needed.insert(product);
+      }
+
+      int64_t res = std::numeric_limits<int64_t>::min();
+      for (const auto product_id : needed) {
+        int64_t closest_shop = std::numeric_limits<int64_t>::max();
+        for (const auto shop : input.shops) {
+          const Position shop_pos = {shop.row, shop.col};
+          if (shop.number_of_items[product_id] > 0) {
+            closest_shop = std::min<int64_t>(closest_shop, get_distance(order_pos, shop_pos));
+          }
+        }
+        assert(closest_shop != std::numeric_limits<int64_t>::max());
+        res = std::max(res, closest_shop);
+      }
+      return res;
+    };
+    std::unordered_map<int, int64_t> closest_shop;
+    for (size_t i = 0; i < orders.size(); ++i) {
+      closest_shop[i] = find_sum_of_closest(orders[i]);
+    }
+    std::sort(orders.begin(), orders.end(), [&closest_shop](const auto& lhs, const auto& rhs) {
+      if (lhs.product_items.size() != rhs.product_items.size()) {
+        return lhs.product_items.size() < rhs.product_items.size();
+      }
+      return closest_shop.at(lhs.id) > closest_shop.at(rhs.id);
     });
 
     std::vector<DroneInfo> drones(input.n_drones);
@@ -47,7 +77,7 @@ public:
         int cnt = needed[product_id];
         while (cnt > 0) {
           // cost, drone_id, shop_id
-          std::tuple<int, int, int> min_turn{std::numeric_limits<int>::max(), -1, -1};
+          std::tuple<int, int, int> min_turn = {std::numeric_limits<int>::max(), -1, -1};
 
           for (size_t drone_id = 0; drone_id < drones.size(); ++drone_id) {
             auto& drone = drones[drone_id]; 
