@@ -79,6 +79,11 @@ struct LoadCmd : public Cmd {
   int product_id;
   int number_of_items;
 
+  LoadCmd() = default;
+  LoadCmd(int drone_id, int shop_id, int product_id, int number_of_items)
+    : drone_id(drone_id), shop_id(shop_id), product_id(product_id), number_of_items(number_of_items) {
+  }
+
   std::string to_string() const override {
     std::stringstream ss;
     ss << drone_id << " L "  << shop_id << " " << product_id << " " << number_of_items;
@@ -104,6 +109,11 @@ struct DeliverCmd : public Cmd {
   int order_id;
   int product_id;
   int number_of_items;
+
+  DeliverCmd() = default;
+  DeliverCmd(int drone_id, int order_id, int product_id, int number_of_items)
+    : drone_id(drone_id), order_id(order_id), product_id(product_id), number_of_items(number_of_items) {
+  }
 
   std::string to_string() const override {
     std::stringstream ss;
