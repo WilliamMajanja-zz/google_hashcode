@@ -17,6 +17,7 @@
 #include <unordered_set>
 #include <vector>
 #include <variant>
+#include <tuple>
 
 #define X first
 #define Y second
@@ -47,6 +48,10 @@ struct Order {
 
   int sz_left;
   int id;
+
+  bool operator<(const Order& rhs) const {
+    return tie(id, row, col, sz_left, product_items) < tie(id, rhs.row, rhs.col, rhs.sz_left, rhs.product_items);
+  }
 };
 
 struct Input {
