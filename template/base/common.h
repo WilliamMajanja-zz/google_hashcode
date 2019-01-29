@@ -10,6 +10,7 @@
 #include <memory>
 #include <random>
 #include <set>
+#include <map>
 #include <sstream>
 #include <thread>
 #include <unordered_map>
