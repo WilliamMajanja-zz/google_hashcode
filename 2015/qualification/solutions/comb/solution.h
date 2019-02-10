@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../base/solution.h"
+#include "assign.h"
 
 class Solution : public BaseSolution {
 public:
@@ -32,6 +33,7 @@ public:
     vector<vector<int>> row_to_servs;
     set<int> buffer;
     int ind = 0;
+    output.servs.resize(input.M);
     for (int r = 0; r < input.R; ++r) {
       LOG("process row: " << r)
       for (int i = 0; i < 50 && ind < perm.size(); ++i) {
@@ -66,6 +68,7 @@ public:
       row_to_servs.push_back({});
       for (auto x : result) {
         row_to_servs.back().push_back(x.X);
+        output.servs[x.X] = Server(r, x.Y, -1);
       }
       for (auto x : to_remove) {
         buffer.erase(x);
@@ -74,6 +77,15 @@ public:
       //buffer.clear();
       LOG("score for row: " << score[bind] << " servers added: " << result.size())
     }
+
+    LOG("finish split")
+    auto pools = ser_to_pool(input, row_to_servs);
+
+    for (int i = 0; i < pools.size(); ++i) {
+      output.servs[i].ap = pools[i];
+    }
+
+
     LOG("finished")
   }
 
