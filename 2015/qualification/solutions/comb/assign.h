@@ -3,7 +3,7 @@
 #include "../../base/common.h"
 
 struct Pool {
-  int id 
+  int id;
   vector<int> cap_in_row;
   int score = 0;
 
