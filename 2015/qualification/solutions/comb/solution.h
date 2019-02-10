@@ -36,10 +36,14 @@ public:
     output.servs.resize(input.M);
     int tot_sc = 0;
     bool prev = false;
+    set<int> used;
     for (int r = 0; r < input.R; ++r) {
       LOG("process row: " << r)
-      for (int i = 0; i < 30 && ind < perm.size(); ++i) {
-        buffer.insert(ind++);
+      for (int i = 0; i < 100 && ind < perm.size(); ++i) {
+        if (!used.count(r + i * input.R) && r + i * input.R < input.M) {
+          buffer.insert(r + i * input.R);
+          used.insert(r + i * input.R);
+        }
       }
       now.assign(input.S + 1, vector<pair<int, int>>());
       vector<int> score(input.S + 1, 0);
