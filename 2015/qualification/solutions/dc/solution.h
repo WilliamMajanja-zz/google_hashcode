@@ -34,7 +34,7 @@ struct ServerInfo {
 
 class Row {
 public:
-  Row(const std::vector<int>& row) {
+  Row(const std::vector<int>& row, int id) : id(id) {
     int ptr = 0;
     while (ptr < row.size()) {
       while (ptr < row.size() && row[ptr]) {
@@ -72,8 +72,17 @@ public:
     return std::make_optional(space.start_pos_);
   }
 
+  int Id() const {
+    return id;
+  }
+
+  int FragmentationLevel() const {
+    return space_pool_.size();
+  }
+
 private:
   std::set<Space> space_pool_;
+  int id;
 };
 
 class Solution : public BaseSolution {
@@ -93,9 +102,17 @@ public:
 
     std::vector<Row> dc;
     dc.reserve(input.R);
-    for (const auto& row : dc_field) {
-      dc.emplace_back(row);
+    for (int i = 0; i < input.R; ++i) {
+      dc.emplace_back(dc_field[i], i);
     }
+
+    auto rng = std::default_random_engine {};
+    std::shuffle(dc.begin(), dc.end(), rng);
+/*
+    std::sort(dc.begin(), dc.end(), [](const auto& lhs, const auto& rhs) {
+      return lhs.FragmentationLevel() > rhs.FragmentationLevel();
+    });
+*/
 
     std::vector<ServerInfo> servers;
     servers.reserve(input.M);
@@ -126,7 +143,7 @@ public:
         auto res = dc[row].TryInsert(server);
         if (res.has_value()) {
           ok = true;
-          output.servs[server.id_] = Server(row, res.value(), cur_pool);
+          output.servs[server.id_] = Server(dc[row].Id(), res.value(), cur_pool);
           break;
         }
       }
