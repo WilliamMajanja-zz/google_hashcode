@@ -22,7 +22,7 @@ bool relax(const Input& input, const vector<vector<int>>& rows, vector<int>& poo
   Pool pool = *pools.begin();
   pools.erase(pools.begin());
 
-  int best_delta = 0, best_ex_delta = 0, best_server = -1;
+  int best_delta = 0, best_ex_delta = 0, best_server = -1, best_row = 0;
   for (int r = 0; r < input.R; ++r) {
     for (const auto& server : rows[r]) {
       if (pool_id[server] != -1)
@@ -42,6 +42,7 @@ bool relax(const Input& input, const vector<vector<int>>& rows, vector<int>& poo
         best_delta = delta;
         best_ex_delta = ex_delta;
         best_server = server;
+        best_row = r;
       }
     }
   }
@@ -52,6 +53,7 @@ bool relax(const Input& input, const vector<vector<int>>& rows, vector<int>& poo
 
   pool_id[best_server] = pool.id;
   pool.score += best_delta;
+  pool.cap_in_row[best_row] += input.servs[best_server].second;
 
   pools.insert(pool);
   return true;
