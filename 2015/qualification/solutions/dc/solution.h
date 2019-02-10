@@ -185,13 +185,13 @@ public:
 
     LOG("base score is " << best_score);
 
-    const double DEC = 0.99999;
+    const double DEC = 0.9999;
     double T = 100;
     std::uniform_real_distribution<double> ud(0, 1.0);
     std::default_random_engine rng{};
 
     const int MAX_ATTEMPTS = 5;
-    const int MAX_ITERS = 100000;
+    const int MAX_ITERS = 1000000;
     for (int iter = 1; iter < MAX_ITERS; ++iter) {
       if (iter % 10000 == 0) {
         LOG("T is " << T);
@@ -227,6 +227,50 @@ public:
         }
       }
       try_to_insert_servers();
+
+      if (iter % 10 == 0) {
+        bool better = true;
+        while (better) {
+          better = false;
+          auto scores = pool_scores(input, output, /* enable_logging */ false);
+          auto min_pool = std::min_element(scores.begin(), scores.end()) - scores.begin();
+          auto max_pool = std::max_element(scores.begin(), scores.end()) - scores.begin();
+
+          auto find_servers_for_pool = [&](int pool_id) {
+            std::vector<int> res;
+            for (int i = 0; i < input.M; ++i) {
+              auto& server = output.servs[i];
+              if (server.ok && server.ap == pool_id) {
+                res.push_back(i);
+              }
+            }
+            return res;
+          };
+          auto swap_servers_pools = [&](int lhs, int rhs) {
+            std::swap(output.servs[lhs].ap, output.servs[rhs].ap);
+          };
+
+          std::pair<int, int> best_pair = {-1, -1};
+          int best_score = calculate_score(input, output, /* enable_logging */ false);
+          auto left = find_servers_for_pool(min_pool);
+          auto right = find_servers_for_pool(max_pool);
+          for (int i = 0; i < left.size(); ++i) {
+            for (int j = 0; j < right.size(); ++j) {
+              swap_servers_pools(left[i], right[j]);
+              const int after_swap_score = calculate_score(input, output, /* enable_logging */ false);
+              swap_servers_pools(left[i], right[j]);
+              if (after_swap_score > best_score) {
+                best_score = after_swap_score;
+                best_pair = {i, j};
+              }
+            }
+          }
+          if (best_pair.first != -1) {
+            auto [lid, rid] = best_pair;
+            swap_servers_pools(left[lid], right[rid]);
+          }
+        }
+      }
 
       const int cur_score = calculate_score(input, output, /* enable_logging */ false);
 
