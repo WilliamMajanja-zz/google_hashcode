@@ -7,6 +7,8 @@ public:
   BaseSolution(const Input& input):
     input_(input) {}
 
+  virtual ~BaseSolution() = default;
+
   const auto& input() const { return input_; }
   const auto& output() { return output_; }
 

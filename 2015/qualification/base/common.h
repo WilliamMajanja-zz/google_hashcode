@@ -35,13 +35,11 @@ struct Input {
 
 struct Server {
   int ar, as, ap;
-  bool ok;
+  bool ok = false;
 
+  Server() = default;
   Server(int ar, int as, int ap):
     ar(ar), as(as), ap(ap), ok(true) {}
-
-  Server(char):
-    ok(false) {}
 };
 
 struct Output {
