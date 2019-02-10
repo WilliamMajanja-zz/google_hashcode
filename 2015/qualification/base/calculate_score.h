@@ -2,32 +2,34 @@
 
 #include "common.h"
 
+#define m_assert(msg, exp) { if (!(exp)) { throw std::string((msg)); } }
+
 std::string print_coordinates(int r, int s, bool square = false) {
   return (square ? "[" : "(") + std::to_string(r) + ", " + std::to_string(s) + (square ? "]" : ")");
 }
 
 void validate(const Input& input, const Output& output, bool enable_logging) {
-  assert(("Invalid output, expecting description of " + std::to_string(input.M) + " servers",
-    output.servs.size() == input.M));
+  m_assert("Invalid output, expecting description of " + std::to_string(input.M) + " servers",
+    output.servs.size() == input.M);
   for (size_t i = 0; i < output.servs.size(); ++i) {
     const auto& server = output.servs[i];
     if (!server.ok)
       continue;
 
-    assert(("server " + std::to_string(i) + " has wrong coordinates: " + print_coordinates(server.ar, server.as) +
+    m_assert("server " + std::to_string(i) + " has wrong coordinates: " + print_coordinates(server.ar, server.as) +
       ", it must be in " + print_coordinates(0, input.R, true) + " x " + print_coordinates(0, input.S),
-      0 <= server.ar && server.ar < input.R && 0 <= server.as && server.as < input.S));
+      0 <= server.ar && server.ar < input.R && 0 <= server.as && server.as < input.S);
 
-    assert(("server " + std::to_string(i) + " extends beyond the slots on the row ",
-      server.as + input.servs[i].first <= input.S));
+    m_assert("server " + std::to_string(i) + " extends beyond the slots on the row ",
+      server.as + input.servs[i].first <= input.S);
 
-    assert(("server " + std::to_string(i) + " has invalid pool number: " + std::to_string(server.ap),
-      0 <= server.ap && server.ap < input.P));
+    m_assert("server " + std::to_string(i) + " has invalid pool number: " + std::to_string(server.ap),
+      0 <= server.ap && server.ap < input.P);
 
     for (size_t j = 0; j < input.us.size(); ++j) {
       if (input.us[j].first == server.ar) {
-        assert(("server " + std::to_string(i) + " occupies unavailable slot " + print_coordinates(input.us[j].first, input.us[j].second),
-          server.as + input.servs[i].first <= input.us[j].second || server.as > input.us[j].second));
+        m_assert("server " + std::to_string(i) + " occupies unavailable slot " + print_coordinates(input.us[j].first, input.us[j].second),
+          server.as + input.servs[i].first <= input.us[j].second || server.as > input.us[j].second);
       }
     }
   }
