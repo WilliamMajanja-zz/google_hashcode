@@ -19,7 +19,7 @@ void validate(const Input& input, const Output& output, bool enable_logging) {
       0 <= server.ar && server.ar < input.R && 0 <= server.as && server.as < input.S));
 
     assert(("server " + std::to_string(i) + " extends beyond the slots on the row ",
-      server.as + input.servs[i].first > server.as));
+      server.as + input.servs[i].first <= input.S));
 
     assert(("server " + std::to_string(i) + " has invalid pool number: " + std::to_string(server.ap),
       0 <= server.ap && server.ap < input.P));
@@ -35,6 +35,7 @@ void validate(const Input& input, const Output& output, bool enable_logging) {
 
 int calculate_score(const Input& input, const Output& output, bool enable_logging = true) {
   validate(input, output, enable_logging);
+
   int score = -1;
   for (int un = 0; un < input.R; ++un) {
     vector<int> cap(input.P);
