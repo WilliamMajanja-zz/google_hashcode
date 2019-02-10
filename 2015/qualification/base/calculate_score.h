@@ -9,7 +9,7 @@ std::string print_coordinates(int r, int s, bool square = false) {
 }
 
 void validate(const Input& input, const Output& output, bool enable_logging) {
-  vector<vector<int>> mark(input.R, vector<int>(input.C));
+  vector<vector<int>> mark(input.R, vector<int>(input.S));
   for (size_t j = 0; j < input.us.size(); ++j) {
     mark[input.us[j].first][input.us[j].second] = -j - 1;
   }
@@ -34,10 +34,10 @@ void validate(const Input& input, const Output& output, bool enable_logging) {
     for (size_t c = server.as; c < server.as + input.servs[i].first; ++c) {
       int m = mark[server.ar][c];
       if (m < 0) {
-        m_assert("server " + std::to_string(i) " occupies unavailable slot " + print_coordinates(input.us[-m - 1].first, input.us[-m - 1].second), false);
+        m_assert("server " + std::to_string(i) + " occupies unavailable slot " + print_coordinates(input.us[-m - 1].first, input.us[-m - 1].second), false);
       }
       if (m > 0) {
-        m_assert("server " + std::to_string(i) " occupies slot " + print_coordinates(input.us[m - 1].first, input.us[m - 1].second)
+        m_assert("server " + std::to_string(i) + " occupies slot " + print_coordinates(input.us[m - 1].first, input.us[m - 1].second)
           + " taken by server " + std::to_string(m - 1), false);
       }
       mark[server.ar][c] = i + 1;
