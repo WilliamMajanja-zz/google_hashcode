@@ -2,6 +2,8 @@
 
 #include "../../base/common.h"
 
+#include <numeric>
+
 struct Pool {
   int id;
   vector<int> cap_in_row;
@@ -28,14 +30,12 @@ bool relax(const Input& input, const vector<vector<int>>& rows, vector<int>& poo
       if (pool_id[server] != -1)
         continue;
 
-      int new_cap = pool.cap_in_row[r] + input.servs[server].second;
-      int new_score = -1;
-      for (size_t i = 0; i < input.R; ++i) {
-        int cur_cap = i == r ? new_cap : pool.cap_in_row[i];
-        if (new_score == -1 || new_score > cur_cap) {
-          new_score = cur_cap;
-        }
-      }
+      auto new_caps = pool.cap_in_row;
+      new_caps[r] += input.servs[server].second;
+      int max_cap = *std::max_element(new_caps.begin(), new_caps.end());
+      int sum_cap = std::accumulate(new_caps.begin(), new_caps.end(), 0);
+      int new_score = sum_cap - max_cap;
+
       int delta = new_score - pool.score;
       int ex_delta = input.servs[server].second;
       if (best_delta < delta || (delta == best_delta && best_ex_delta < ex_delta)) {
