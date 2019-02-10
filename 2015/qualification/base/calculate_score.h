@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#define m_assert(msg, exp) { if (!(exp)) { throw std::string((msg)); } }
+#define m_assert(msg, exp) { if (!(exp)) {  LOG((msg)); assert(false); } }
 
 std::string print_coordinates(int r, int s, bool square = false) {
   return (square ? "[" : "(") + std::to_string(r) + ", " + std::to_string(s) + (square ? "]" : ")");
