@@ -64,7 +64,7 @@ vector<int> ser_to_pool(const Input& input, const vector<vector<int>>& rows) {
   }
 
   vector<int> pool_id(input.M, -1);
-  while (relax(input, rows, server_to_row, pool_id, pool));
+  while (relax(input, rows, pool_id, pools));
 
   return pool_id;
 }
