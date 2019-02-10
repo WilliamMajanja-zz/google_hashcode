@@ -82,7 +82,10 @@ public:
     auto pools = ser_to_pool(input, row_to_servs);
 
     for (int i = 0; i < pools.size(); ++i) {
-      output.servs[i].ap = pools[i];
+      if (output.servs[i].ok) {
+        LOG(i << " " << pools[i]);
+        output.servs[i].ap = pools[i];
+      }
     }
 
 
