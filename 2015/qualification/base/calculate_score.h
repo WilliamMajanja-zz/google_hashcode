@@ -16,10 +16,13 @@ void validate(const Input& input, const Output& output, bool enable_logging) {
 
     assert(("server " + std::to_string(i) + " has wrong coordinates: " + print_coordinates(server.ar, server.as) +
       ", it must be in " + print_coordinates(0, input.R, true) + " x " + print_coordinates(0, input.S),
-      server.ar < 0 || input.R <= server.ar || server.as < 0 || input.S >= server.as));
+      0 <= server.ar && server.ar < input.R && 0 <= server.as && server.as < input.S));
 
     assert(("server " + std::to_string(i) + " extends beyond the slots on the row ",
       server.as + input.servs[i].first > server.as));
+
+    assert(("server " + std::to_string(i) + " has invalid pool number: " + std::to_string(server.ap),
+      0 <= server.ap && server.ap < input.P));
 
     for (size_t j = 0; j < input.us.size(); ++j) {
       if (input.us[j].first == server.ar) {
