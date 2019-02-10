@@ -48,5 +48,5 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
       score = current_score;
     }
   }
-  return score;
+  return std::max(0, score);
 }
