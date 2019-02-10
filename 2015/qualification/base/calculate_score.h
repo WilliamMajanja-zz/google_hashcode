@@ -45,6 +45,9 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
       }
     }
     int current_score = *std::min_element(cap.begin(), cap.end());
+    if (enable_logging) {
+      LOG("Shutdown " + std::to_string(un) + " row, score = " << current_score);
+    }
     if (score == -1 || score > current_score) {
       score = current_score;
     }
