@@ -87,3 +87,25 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
   }
   return std::max(0, score);
 }
+
+std::vector<int> pool_scores(const Input& input, const Output& output, bool enable_logging = true) {
+  validate(input, output, enable_logging);
+
+  std::vector<int> res(input.P, std::numeric_limits<int>::max());
+  for (int un = 0; un < input.R; ++un) {
+    vector<int> cap(input.P);
+    for (size_t j = 0; j < output.servs.size(); ++j) {
+      const auto& server = output.servs[j];
+      if (!server.ok)
+        continue;
+
+      if (server.ar != un) {
+        cap[server.ap] += input.servs[j].second;
+      }
+    }
+    for (size_t j = 0; j < input.P; ++j) {
+      res[j] = std::min(res[j], cap[j]);
+    }
+  }
+  return res;
+}
