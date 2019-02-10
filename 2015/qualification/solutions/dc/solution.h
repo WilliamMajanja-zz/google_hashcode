@@ -104,11 +104,11 @@ public:
       servers.emplace_back(size, cpu, i);
     }
     std::sort(servers.begin(), servers.end(), [](const auto& lhs, const auto& rhs) {
-      if (lhs.size_ != rhs.size_) {
-        return lhs.size_ < rhs.size_;
-      }
       if (lhs.cpu_ != rhs.cpu_) {
         return lhs.cpu_ > rhs.cpu_;
+      }
+      if (lhs.size_ != rhs.size_) {
+        return lhs.size_ < rhs.size_;
       }
       return lhs.id_ < rhs.id_;
     });
@@ -129,10 +129,6 @@ public:
           output.servs[server.id_] = Server(row, res.value(), cur_pool);
           break;
         }
-      }
-
-      if (!ok) {
-        break;
       }
 
       cur_pool = (cur_pool + 1) % input.P;
