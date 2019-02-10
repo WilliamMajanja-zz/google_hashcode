@@ -60,14 +60,6 @@ bool relax(const Input& input, const vector<vector<int>>& rows, vector<int>& poo
 }
 
 vector<int> ser_to_pool(const Input& input, const vector<vector<int>>& rows) {
-  for (auto& row : rows) {
-    for (auto x : row) {
-      if (x == 3) {
-        LOG("fail")
-        exit(0);
-      }
-    }
-  }
   set<Pool> pools;
   for (size_t pool_id = 0; pool_id < input.P; ++pool_id) {
     pools.insert(Pool(pool_id, input.R));

@@ -35,6 +35,7 @@ public:
     int ind = 0;
     output.servs.resize(input.M);
     int tot_sc = 0;
+    bool prev = false;
     for (int r = 0; r < input.R; ++r) {
       LOG("process row: " << r)
       for (int i = 0; i < 30 && ind < perm.size(); ++i) {
@@ -72,7 +73,9 @@ public:
         }
       }
       const auto& result = now[bind];
-      row_to_servs.push_back({});
+      if (!prev) {
+        row_to_servs.push_back({});
+      }
       for (auto x : result) {
         if (x.X == -1) {
           continue;
@@ -87,7 +90,9 @@ public:
 
       if (result.size() == 31 || result.size() == 38) {
         --r;
+        prev = true;
       } else {
+        prev = false;
         total.push_back(result);
         tot_sc += score[bind];
         int free_space = input.S;
