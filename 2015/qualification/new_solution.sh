@@ -11,7 +11,7 @@ if [ "$#" == 2 ]; then
 fi
 
 mkdir output/$solution_name
-echo "output" > output/$solution_name/output.txt
+echo "output" > output/$1/output.txt
 
 mkdir solutions/$solution_name
 cp templates/* solutions/$solution_name/
