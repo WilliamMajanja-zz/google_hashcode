@@ -57,19 +57,29 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
 
   int score = -1;
   for (int un = 0; un < input.R; ++un) {
-    vector<int> cap(input.P);
+    vector<pair<int, int>> cap(input.P);
+    for (int i = 0; i < cap.size(); ++i)
+      cap[i].second = i;
     for (size_t j = 0; j < output.servs.size(); ++j) {
       const auto& server = output.servs[j];
       if (!server.ok)
         continue;
 
       if (server.ar != un) {
-        cap[server.ap] += input.servs[j].second;
+        cap[server.ap].first += input.servs[j].second;
       }
     }
-    int current_score = *std::min_element(cap.begin(), cap.end());
+    sort(cap.begin(), cap.end(), [](const auto& lhs, const auto& rhs) {
+      return lhs.first < rhs.first;
+    });
+    int current_score = cap[0].first;
+    std::string bad_pools;
+    for (int i = 0; i < 5; ++i) {
+      if (i != 0) bad_pools += ", ";
+      bad_pools += "(№" + to_string(cap[i].second) + ": " + to_string(cap[i].first) + ")";
+    }
     if (enable_logging) {
-      LOG("Shutdown " + std::to_string(un) + " row, score = " << current_score);
+      LOG("Shutdown " + std::to_string(un) + " row, score = " << current_score << ", worst pools (id, score) = " << bad_pools);
     }
     if (score == -1 || score > current_score) {
       score = current_score;
