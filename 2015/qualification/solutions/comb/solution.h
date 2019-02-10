@@ -24,8 +24,8 @@ public:
     }
     sort(
       perm.begin(), perm.end(), [&input](int l, int r) {
-        return input.servs[l].Y >  input.servs[r].Y;
-        //return (double)input.servs[l].Y / sqrt(input.servs[l].X) > (double)  input.servs[r].Y / sqrt(input.servs[r].X);
+        //return input.servs[l].X >  input.servs[r].X;
+        return (double)input.servs[l].Y / (input.servs[l].X) > (double)  input.servs[r].Y / (input.servs[r].X);
       }
     );
     LOG("perm inited")
