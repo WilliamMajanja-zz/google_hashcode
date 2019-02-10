@@ -211,7 +211,7 @@ public:
       }
       // take random rows and try to remove all servers from these rows
       if (iter % 100 == 0) {
-        for (int attempt = 0; attempt < 3; ++attempt) {
+        for (int attempt = 0; attempt < 2; ++attempt) {
           const int row_id = rand_row(gen);
           for (int i = 0; i < input.M; ++i) {
             if (!output.servs[i].ok) {
@@ -250,24 +250,33 @@ public:
             std::swap(output.servs[lhs].ap, output.servs[rhs].ap);
           };
 
-          std::pair<int, int> best_pair = {-1, -1};
-          int best_score = calculate_score(input, output, /* enable_logging */ false);
-          auto left = find_servers_for_pool(min_pool);
-          auto right = find_servers_for_pool(max_pool);
-          for (int i = 0; i < left.size(); ++i) {
-            for (int j = 0; j < right.size(); ++j) {
-              swap_servers_pools(left[i], right[j]);
-              const int after_swap_score = calculate_score(input, output, /* enable_logging */ false);
-              swap_servers_pools(left[i], right[j]);
-              if (after_swap_score > best_score) {
-                best_score = after_swap_score;
-                best_pair = {i, j};
+          const int score = calculate_score(input, output, /* enable_logging */ false);
+
+          const auto left = find_servers_for_pool(min_pool);
+          const auto right = find_servers_for_pool(max_pool);
+
+          std::uniform_int_distribution<int> left_dist(0, left.size() - 1);
+          std::uniform_int_distribution<int> right_dist(0, right.size() - 1);
+
+          std::vector<std::pair<int, int>> history;
+          for (int attempt = 0; attempt < 5; ++attempt) {
+            const int lid = left_dist(gen);
+            const int rid = right_dist(gen);
+            history.push_back({lid, rid});
+
+            swap_servers_pools(left[lid], right[rid]);
+          }
+
+          const int new_score = calculate_score(input, output, /* enable_logging */ false);
+          if (new_score > score) {
+            better = true;
+          } else {
+            double h = 1 / (1 + std::exp(-(new_score - score) / T));
+            if (ud(gen) > h) {
+              for (const auto [lid, rid] : history) {
+                swap_servers_pools(left[lid], right[rid]);
               }
             }
-          }
-          if (best_pair.first != -1) {
-            auto [lid, rid] = best_pair;
-            swap_servers_pools(left[lid], right[rid]);
           }
         }
       }
