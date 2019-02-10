@@ -37,10 +37,11 @@ struct Server {
   int ar, as, ap;
   bool ok;
 
+  Server() {}
   Server(int ar, int as, int ap):
     ar(ar), as(as), ap(ap), ok(true) {}
 
-  Server(char):
+  Server():
     ok(false) {}
 };
 
