@@ -124,7 +124,7 @@ public:
     std::uniform_int_distribution<int> rand_server(0, input.M - 1);
     std::uniform_int_distribution<int> rand_row(0, input.R - 1);
     std::uniform_int_distribution<int> rand_pool(0, input.P - 1);
-    std::uniform_int_distribution<int> rand_attempts(1, 15);
+    std::uniform_int_distribution<int> rand_attempts(4, 7);
 
     output.servs.resize(input.M);
 
@@ -185,14 +185,14 @@ public:
 
     LOG("base score is " << best_score);
 
-    const double To = 150;
-    double T = To;
-    double dec = 5;
-    double h;
+    const double DEC = 0.9999;
+    double T = 100;
     std::uniform_real_distribution<double> ud(0, 1.0);
+    std::default_random_engine rng{};
 
-    const int MAX_ATTEMPTS = rand_attempts(gen);
-    for (int iter = 1; iter < 100000; ++iter) {
+    const int MAX_ATTEMPTS = 5;
+    const int MAX_ITERS = 1000000;
+    for (int iter = 1; iter < MAX_ITERS; ++iter) {
       if (iter % 10000 == 0) {
         LOG("T is " << T);
       }
@@ -209,7 +209,77 @@ public:
         output.servs[server_id].ok = false;
         dc[row].ReturnSpace(Space(start_pos, length));
       }
+      // take random rows and try to remove all servers from these rows
+      if (iter % 100 == 0) {
+        for (int attempt = 0; attempt < 2; ++attempt) {
+          const int row_id = rand_row(gen);
+          for (int i = 0; i < input.M; ++i) {
+            if (!output.servs[i].ok) {
+              continue;
+            }
+            if (output.servs[i].ar == row_id) {
+              const int start_pos = output.servs[i].as;
+              const int length = input.servs[i].first;
+              output.servs[i].ok = false;
+              dc[row_id].ReturnSpace(Space(start_pos, length));
+            }
+          }
+        }
+      }
       try_to_insert_servers();
+
+      if (iter % 10 == 0) {
+        bool better = true;
+        while (better) {
+          better = false;
+          auto scores = pool_scores(input, output, /* enable_logging */ false);
+          auto min_pool = std::min_element(scores.begin(), scores.end()) - scores.begin();
+          auto max_pool = std::max_element(scores.begin(), scores.end()) - scores.begin();
+
+          auto find_servers_for_pool = [&](int pool_id) {
+            std::vector<int> res;
+            for (int i = 0; i < input.M; ++i) {
+              auto& server = output.servs[i];
+              if (server.ok && server.ap == pool_id) {
+                res.push_back(i);
+              }
+            }
+            return res;
+          };
+          auto swap_servers_pools = [&](int lhs, int rhs) {
+            std::swap(output.servs[lhs].ap, output.servs[rhs].ap);
+          };
+
+          const int score = calculate_score(input, output, /* enable_logging */ false);
+
+          const auto left = find_servers_for_pool(min_pool);
+          const auto right = find_servers_for_pool(max_pool);
+
+          std::uniform_int_distribution<int> left_dist(0, left.size() - 1);
+          std::uniform_int_distribution<int> right_dist(0, right.size() - 1);
+
+          std::vector<std::pair<int, int>> history;
+          for (int attempt = 0; attempt < 5; ++attempt) {
+            const int lid = left_dist(gen);
+            const int rid = right_dist(gen);
+            history.push_back({lid, rid});
+
+            swap_servers_pools(left[lid], right[rid]);
+          }
+
+          const int new_score = calculate_score(input, output, /* enable_logging */ false);
+          if (new_score > score) {
+            better = true;
+          } else {
+            double h = 1 / (1 + std::exp(-(new_score - score) / T));
+            if (ud(gen) > h) {
+              for (const auto [lid, rid] : history) {
+                swap_servers_pools(left[lid], right[rid]);
+              }
+            }
+          }
+        }
+      }
 
       const int cur_score = calculate_score(input, output, /* enable_logging */ false);
 
@@ -219,13 +289,13 @@ public:
         best_score = cur_score;
         best_output = output;
       } else {
-        h = 1 / (1 + std::exp(-(cur_score - best_score) / T));
+        double h = 1 / (1 + std::exp(-(cur_score - best_score) / T));
         if (ud(gen) > h) {
           output = best_output;
         }
       }
 
-      T = To * std::exp(-dec * std::pow(iter, 1.0 / (2 * input.R)));
+      T = T * DEC;
     }
 
     std::swap(output, best_output);

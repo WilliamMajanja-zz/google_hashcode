@@ -74,16 +74,43 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
     });
     int current_score = cap[0].first;
     std::string bad_pools;
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 3; ++i) {
       if (i != 0) bad_pools += ", ";
       bad_pools += "(№" + to_string(cap[i].second) + ": " + to_string(cap[i].first) + ")";
     }
+    std::string best_pools;
+    for (int i = 3; i > 0; --i) {
+      if (i != 3) best_pools += ", ";
+      best_pools += "(№" + to_string(cap[cap.size() - i].second) + ": " + to_string(cap[cap.size() - i].first) + ")";
+    }
     if (enable_logging) {
-      LOG("Shutdown " + std::to_string(un) + " row, score = " << current_score << ", worst pools (id, score) = " << bad_pools);
+      LOG("Shutdown " + std::to_string(un) + " row, score = " << current_score << ", worst pools (id, score) = " << bad_pools << ", best_pools (id, score) = " << best_pools);
     }
     if (score == -1 || score > current_score) {
       score = current_score;
     }
   }
   return std::max(0, score);
+}
+
+std::vector<int> pool_scores(const Input& input, const Output& output, bool enable_logging = true) {
+  validate(input, output, enable_logging);
+
+  std::vector<int> res(input.P, std::numeric_limits<int>::max());
+  for (int un = 0; un < input.R; ++un) {
+    vector<int> cap(input.P);
+    for (size_t j = 0; j < output.servs.size(); ++j) {
+      const auto& server = output.servs[j];
+      if (!server.ok)
+        continue;
+
+      if (server.ar != un) {
+        cap[server.ap] += input.servs[j].second;
+      }
+    }
+    for (size_t j = 0; j < input.P; ++j) {
+      res[j] = std::min(res[j], cap[j]);
+    }
+  }
+  return res;
 }
