@@ -2,8 +2,8 @@
 
 #include "common.h"
 
-std::string print_coordinates(int r, int s) {
-  return "(" + std::to_string(r) + ", " + std::to_string(s) + ")";
+std::string print_coordinates(int r, int s, bool square = false) {
+  return (square ? "[" : "(") + std::to_string(r) + ", " + std::to_string(s) + (square ? "]" : ")");
 }
 
 void validate(const Input& input, const Output& output, bool enable_logging) {
@@ -14,7 +14,8 @@ void validate(const Input& input, const Output& output, bool enable_logging) {
     if (!server.ok)
       continue;
 
-    assert(("wrong coordinates of " + std::to_string(i) + " server: " + print_coordinates(server.ar, server.as),
+    assert(("server " + std::to_string(i) + " has wrong coordinates: " + print_coordinates(server.ar, server.as) +
+      ", it must be in " + print_coordinates(0, input.R, true) + " x " + print_coordinates(0, input.S),
       server.ar < 0 || input.R <= server.ar || server.as < 0 || input.S >= server.as));
 
     assert(("server " + std::to_string(i) + " extends beyond the slots on the row ",
