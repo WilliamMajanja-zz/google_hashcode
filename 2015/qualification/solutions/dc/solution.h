@@ -124,6 +124,7 @@ public:
     std::uniform_int_distribution<int> rand_server(0, input.M - 1);
     std::uniform_int_distribution<int> rand_row(0, input.R - 1);
     std::uniform_int_distribution<int> rand_pool(0, input.P - 1);
+    std::uniform_int_distribution<int> rand_attempts(1, 15);
 
     output.servs.resize(input.M);
 
@@ -184,17 +185,18 @@ public:
 
     LOG("base score is " << best_score);
 
-    const double To = 100;
+    const double To = 150;
     double T = To;
-    double dec = 10;
+    double dec = 5;
     double h;
     std::uniform_real_distribution<double> ud(0, 1.0);
+
+    const int MAX_ATTEMPTS = rand_attempts(gen);
     for (int iter = 1; iter < 100000; ++iter) {
       if (iter % 10000 == 0) {
         LOG("T is " << T);
       }
       // take random servers and try to remove them from the output
-      constexpr int MAX_ATTEMPTS = 5; // just a magic const
       for (int attempt = 0; attempt < MAX_ATTEMPTS; ++attempt) {
         const int server_id = rand_server(gen);
         if (!output.servs[server_id].ok) {
