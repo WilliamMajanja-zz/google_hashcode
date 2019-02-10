@@ -34,9 +34,10 @@ public:
     set<int> buffer;
     int ind = 0;
     output.servs.resize(input.M);
+    int tot_sc = 0;
     for (int r = 0; r < input.R; ++r) {
       LOG("process row: " << r)
-      for (int i = 0; i < 50 && ind < perm.size(); ++i) {
+      for (int i = 0; i < 30 && ind < perm.size(); ++i) {
         buffer.insert(ind++);
       }
       now.assign(input.S + 1, vector<pair<int, int>>());
@@ -48,11 +49,17 @@ public:
         int sz = input.servs[serv].X;
         int sc = input.servs[serv].Y;
         for (int sl = input.S - sz - 1; sl >= 0; --sl) {
-          if (!now[sl].empty()) {
-            if (can(sl, r, sz) && score[sl] + sc > score[sl + sz]) {
-              now[sl + sz] = now[sl];
+          if (can(sl, r, sz)) {
+            int bb = 0;
+            for (int i = 0; i < sl + 1; ++i) {
+              if (score[i] > score[bb]) {
+                bb = i;
+              }
+            }
+            if (score[bb] + sc > score[sl + sz]) {
+              now[sl + sz] = now[bb];
               now[sl + sz].emplace_back(serv, sl);
-              score[sl + sz] = score[sl] + sc;
+              score[sl + sz] = score[bb] + sc;
               to_remove.push_back(sind);
             }
           }
@@ -67,28 +74,48 @@ public:
       const auto& result = now[bind];
       row_to_servs.push_back({});
       for (auto x : result) {
+        if (x.X == -1) {
+          continue;
+        }
         row_to_servs.back().push_back(x.X);
-        output.servs[x.X] = Server(r, x.Y, -1);
+        output.servs[x.X] = Server(r, x.Y, 1);
+        add(x.Y, r, input.servs[x.X].X);
       }
       for (auto x : to_remove) {
         buffer.erase(x);
       }
 
-      //buffer.clear();
-      LOG("score for row: " << score[bind] << " servers added: " << result.size())
+      /*
+      if (result.size() == 31 || result.size() == 38) {
+        --r;
+      } else {
+      */
+        total.push_back(result);
+        tot_sc += score[bind];
+        int free_space = input.S;
+        for (int i = 0; i < input.S; ++i) {
+          free_space -= !fd[r][i];
+          if (fd[r][i]) {
+            clog << '.';
+          } else {
+            clog << '#';
+          }
+        }
+        clog << endl;
+        LOG("score for row: " << score[bind] << " servers added: " << result.size() << " free space: " << free_space)
+      //}
     }
 
     LOG("finish split")
     auto pools = ser_to_pool(input, row_to_servs);
 
     for (int i = 0; i < pools.size(); ++i) {
-      if (output.servs[i].ok) {
-        LOG(i << " " << pools[i]);
-        output.servs[i].ap = pools[i];
-      }
+      //LOG("assign pool: " << pools[i] << " to server: " << i)
+      output.servs[i].ap = pools[i];
     }
 
 
+    LOG("tot_sc: " << tot_sc << " mid_sc: " << tot_sc / input.P)
     LOG("finished")
   }
 
@@ -101,7 +128,14 @@ private:
     return ok;
   }
 
+  void add(int sl, int r, int sz) {
+    for (int i = sl; i < sl + sz; ++i) {
+      fd[r][i] = false;
+    }
+  }
+
   vector<vector<pair<int, int>>> now;
+  vector<vector<pair<int, int>>> total;
   vector<vector<bool>> fd;
   const string class_name_ = "Solution";
 };
