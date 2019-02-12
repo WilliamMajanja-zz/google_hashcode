@@ -16,8 +16,6 @@ public:
 
   void solve_internal(const Input& input, Output& output) override {
     LOG("started")
-    /* solve test here */
-
     Input state = input;
 
     auto& orders = state.orders;
@@ -192,7 +190,6 @@ public:
     for (const auto& drone : drones) {
       LOG("drone.turn = " << drone.turn);
     }
-
     LOG("finished")
   }
 
