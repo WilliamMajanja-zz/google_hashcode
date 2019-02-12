@@ -10,7 +10,7 @@ if [ "$#" == 2 ]; then
   solution_name=$2
 fi
 
-mkdir output/$solution_name
+mkdir output/$1
 echo "output" > output/$1/output.txt
 
 mkdir solutions/$solution_name
