@@ -1,4 +1,4 @@
-#include "knapsack.h"
+#include "range_knapsack.h"
 #include "../base/common.h"
 
 int main() {
@@ -12,7 +12,12 @@ int main() {
   knap.add_item(1, 2, 1);
   knap.add_item(2, 9, 4);
   knap.print();
-  LOG("best pack size: " << knap.best_pack().size())
-  LOG("best pack cost: " << knap.best_cost())
+  
+  RangeKnapsack<10> rknap;
+  rknap.block_cell(0);
+  rknap.add_range_item(0, 2, 1, 0, 3);
+  rknap.add_range_item(1, 2, 1, 4, 6);
+  rknap.print();
+
   return 0;
 }
