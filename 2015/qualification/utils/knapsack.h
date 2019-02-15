@@ -12,13 +12,13 @@ public:
 
   void add_item(int index, int weight, kCostType cost = kCostType(1));
   void reset();
-  virtual void print();
+  void print();
 
   const vector<pair<shared_ptr<Item>, Position>>& best_pack() { return pack_[best_pack_w_]; }
   kCostType best_cost() { return dp_[best_pack_w_]; }
 
 protected:
-  std::string representation();
+  virtual std::string representation();
 
 private:
   void update_best_pack_w() {
@@ -31,6 +31,7 @@ private:
 
 
   virtual bool can_emplace(int item_index, Position position) { return true; }
+  virtual void reset_internal() {}
 
   vector<shared_ptr<Item>> items_;
 
@@ -90,6 +91,7 @@ void Knapsack<kCapacity, kCostType>::reset() {
   }
   best_pack_w_ = 0;
   items_.clear();
+  reset_internal();
 }
 
 template<int kCapacity, typename kCostType>
@@ -97,6 +99,7 @@ string Knapsack<kCapacity, kCostType>::representation() {
   int now = 0;
   string representation;
   for (const auto& [item, position] : pack_[best_pack_w_]) {
+    ASSERT(now <= position.l, "interval intersect previous: " << position.l << ' ' << position.r)
     while (now < position.l) {
       representation.push_back('.');
       ++now;
@@ -115,8 +118,12 @@ string Knapsack<kCapacity, kCostType>::representation() {
 
 template<int kCapacity, typename kCostType>
 void Knapsack<kCapacity, kCostType>::print() {
+  std::string repr = representation();
+  LOG("==========================")
   LOG("best cost: " << best_cost())
-  LOG("best pack: " << representation())
+  LOG("best pack: " << repr)
+  LOG("unused space: " << count(repr.begin(), repr.end(), '.'))
+  LOG("==========================")
 }
 
 template<int kCapacity, typename kCostType>

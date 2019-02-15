@@ -5,8 +5,6 @@ class RangeKnapsack : public Knapsack<kCapacity, kCostType> {
 public:
   using Position = typename Knapsack<kCapacity, kCostType>::Position;
   using Range = Position;
-  using Knapsack<kCapacity, kCostType>::representation;
-  using Knapsack<kCapacity, kCostType>::best_cost;
 
   void add_range_item(int index, int weight, kCostType cost, int l, int r) {
     index_to_range_[index] = Range(l, r);
@@ -17,8 +15,9 @@ public:
     blocked_cells_.insert(index);
   }
 
-  void print() override {
-    auto range_representation  = representation();
+protected:
+  std::string representation() override {
+    auto range_representation  = Knapsack<kCapacity, kCostType>::representation();
     for (auto blocked_cell : blocked_cells_) {
       ASSERT(
           range_representation[blocked_cell] == '.',
@@ -26,18 +25,24 @@ public:
       )
       range_representation[blocked_cell] = '#';
     }
-    LOG("best range cost: " << best_cost())
-    LOG("best range pack: " << range_representation)
+    return range_representation;
   }
+
 
 private:
   bool can_emplace(int item_index, Position position) override {
-    auto range = index_to_range_[item_index];
     auto lower_bound = blocked_cells_.lower_bound(position.l);
-    if (lower_bound != blocked_cells_.end() && *lower_bound < range.r) {
+    if (lower_bound != blocked_cells_.end() && *lower_bound < position.r) {
       return false;
     }
-    return range.l <= position.l && position.r <= range.r;
+    auto range = index_to_range_.find(item_index);
+    return range == index_to_range_.end() || range->Y.l <= position.l && position.r <= range->Y.r;
+  }
+
+
+  void reset_internal() override {
+    blocked_cells_.clear();
+    index_to_range_.clear();
   }
 
   set<int> blocked_cells_;

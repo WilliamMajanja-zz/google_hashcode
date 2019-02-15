@@ -28,13 +28,17 @@ void validate(const Input& input, const Output& output, bool enable_logging) {
 
     for (size_t c = server.as; c < server.as + input.servs[i].first; ++c) {
       int m = mark[server.ar][c];
-      if (m < 0) {
-        ASSERT(false, "server " << i << " occupies unavailable slot " << print_coordinates(input.us[-m - 1].first, input.us[-m - 1].second));
-      }
-      if (m > 0) {
-        ASSERT(false, "server " << i << " occupies slot " << print_coordinates(input.us[m - 1].first, input.us[m - 1].second)
-          << " taken by server " << (m - 1));
-      }
+      ASSERT(
+          m >= 0,
+          "server " << i <<
+          " occupies unavailable slot " << print_coordinates(input.us[-m - 1].first, input.us[-m - 1].second)
+      );
+      ASSERT(
+          m <= 0,
+          "server " << i <<
+          " occupies slot " << print_coordinates(input.us[m - 1].first, input.us[m - 1].second)
+          << " taken by server " << (m - 1)
+      );
       mark[server.ar][c] = i + 1;
     }
 
