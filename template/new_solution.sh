@@ -21,3 +21,4 @@ else
   sed -i -e "s/<<test_name>>/$1/g" solutions/$solution_name/*
 fi
 mkdir solutions/$solution_name/logs
+echo "debug log" > solutions/$solution_name/logs/debug.log
