@@ -2,6 +2,7 @@
 #include "../../base/calculate_score.h"
 
 int main(int argc, char** argv) {
+  DBG("debug mode")
   LOG("srand: " << atoi(argv[1]))
   srand(atoi(argv[1]));
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../base/solution.h"
+#include "../../utils/knapsack.h"
 
 class Solution : public BaseSolution {
 public:
@@ -11,74 +12,75 @@ public:
   void solve_internal(const Input& input, Output& output) override {
     LOG("started")
     output.servers.resize(input.C);
-    vector<vector<double>> serv_to_vid(input.C, vector<double>(input.V));
-    vector<vector<Request>> req_by_vid(input.V);
-    vector<vector<bool>> used_req_by_vid(input.V);
-    vector<unordered_map<int, int>> end_to_serv(input.E);
-    for (const auto& req : input.requests) {
-      req_by_vid[req.V].push_back(req);
+
+    unordered_set<int> req_to_process;
+    vector<ll> req_ans(input.R);
+    vector<ll> next_req_ans(input.R);
+    for (int i = 0; i < input.R; ++i) {
+      req_to_process.insert(i);
     }
+    
+    int connections[input.E][input.C];
     for (int i = 0; i < input.endpoints.size(); ++i) {
-      for (auto con : input.endpoints[i].connections) {
-        end_to_serv[i][con.first] = con.second;
+      for (int j = 0; j < input.C; ++j) {
+        connections[i][j] = input.endpoints[i].L;
       }
-    }
-    for (int vid = 0; vid < input.V; ++vid) {
-      if (vid % 100 == 0) {
-        LOG("init vid: " << vid << " total: " << input.V)
-      }
-      for (int sid = 0; sid < input.C; ++sid) {
-        for (const auto& req : req_by_vid[vid]) {
-          if (end_to_serv[req.E].find(sid) != end_to_serv[req.E].end()) {
-            int old_lat = input.endpoints[req.E].L;
-            int new_lat = end_to_serv[req.E][sid];
-            serv_to_vid[sid][vid] += old_lat - new_lat;
-          }
-        }
-      }
-    }
-    LOG("serv_to_vid inited")
-
-    vector<int> sz(input.C);
-    while (1) {
-      int sid = 0;
-      int vid = 0;
-      for (int i = 0; i < input.C; ++i) {
-        for (int j = 0; j < input.V; ++j) {
-          if (serv_to_vid[i][j] > serv_to_vid[sid][vid]) {
-            sid = i;
-            vid = j;
-          }
-        }
-      }
-      if (serv_to_vid[sid][vid] == 0) {
-        break;
-      }
-      sz[sid] += input.videos[vid];
-      if (input.videos[vid] + sz[sid] <= input.X) {
-        output.servers[sid].push_back(vid);
-        LOG("add video: " << vid << " to server: " << sid <<
-            " size: " << input.videos[vid] << 
-            " improve: " << serv_to_vid[sid][vid] << " free space: " << input.X - sz[sid])
-      }
-      serv_to_vid[sid][vid] = 0;
-
-      for (int i = 0; i < input.C; ++i) {
-        for (const auto& req : req_by_vid[vid]) {
-          if (end_to_serv[req.E].find(sid) != end_to_serv[req.E].end()) {
-            if (end_to_serv[req.E].find(i) != end_to_serv[req.E].end()) {
-              int old_lat = input.endpoints[req.E].L;
-              int new_lat = end_to_serv[req.E][i];
-              serv_to_vid[i][vid] -= old_lat - new_lat;
-              serv_to_vid[i][vid] = max(0.0, serv_to_vid[i][vid]);
-            }
-          }
-        }
+      for (int j = 0; j < input.endpoints[i].connections.size(); ++j) {
+        connections[i][input.endpoints[i].connections[j].X] = input.endpoints[i].connections[j].Y;
       }
     }
 
-    for (auto& serv : output.servers) {
-      sort(serv.begin(), serv.end());
+    vector<vector<int>> vid_to_req(input.V);
+    vector<ll> vid_scores(input.V);
+
+    Knapsack<6000, long long> knap;
+    for (int srv = 0; srv < input.C; ++srv) {
+      ASSERT(req_to_process.size() > 0, "empty req_to_process")
+      LOG("process srv: " << srv)
+      knap.reset();
+
+      vid_to_req.assign(input.V, vector<int>());
+      vid_scores.assign(input.V, 0);
+      for (auto reqind : req_to_process) {
+        auto req = input.requests[reqind];
+        int endp = req.E;
+        int vid = req.V;
+        int cnt = req.N;
+
+        int L = input.endpoints[endp].L;
+        int fix = connections[endp][srv];
+        ll req_score = (ll)(L - fix) * cnt;
+        if (req_score > req_ans[reqind]) {
+          next_req_ans[reqind] = req_score;
+          vid_scores[vid] += req_score - req_ans[reqind];
+          vid_to_req[vid].push_back(reqind);
+        }
+      }
+
+      vector<pair<ll, int>> qwe;
+      for (int i = 0; i < input.V; ++i) {
+        if (vid_scores[i] > 0) {
+          qwe.emplace_back(vid_scores[i], i);
+        }
+      }
+      sort(qwe.rbegin(), qwe.rbegin());
+
+      for (int i = 0; i < min(1000, (int)qwe.size()); ++i) {
+        int vid = qwe[i].Y;
+        knap.add_item(vid, input.videos[vid], qwe[i].X);
+      }
+
+      for (const auto& [item, position] : knap.best_pack()) {
+        output.servers[srv].push_back(item->index);
+        for (auto reqind : vid_to_req[item->index]) {
+          req_ans[reqind] = next_req_ans[reqind];
+        }
+      }
+      knap.print();
+    }
+
+    for (auto& srvs : output.servers) {
+      sort(srvs.begin(), srvs.end());
     }
     LOG("finished")
   }

@@ -62,12 +62,10 @@ public:
 
       LOG("row: " << r)
       for (const auto& [item, position] : rknap.best_pack()) {
-        clog << item->index << ' ';
         row_to_servs[r].push_back(item->index);
         output.servs[item->index] = Server(r, position.l, 1);
         buffer.erase(unperm[item->index]);
       }
-      clog << endl;
     }
 
     LOG("finish split")

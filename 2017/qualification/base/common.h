@@ -21,6 +21,7 @@
 #define Y second
 #define PT pair<int, int>
 #define mk make_pair
+#define ll long long
 
 using namespace std;
 
