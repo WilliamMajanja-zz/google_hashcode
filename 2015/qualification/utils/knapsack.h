@@ -1,21 +1,25 @@
 #include "../base/common.h"
 #include "../base/log.h"
-#include <cstring>
 
-template<int kCapacity, typename kCostType = int>
+template<typename kCostType = int>
 class Knapsack {
 public:
   struct Item;
   struct Position;
 
-  Knapsack() { reset(); }
+  Knapsack(int capacity):
+    kCapacity(capacity) {
+      DBG("init capacity: " << kCapacity)
+      reset();
+    }
 
-  void add_item(int index, int weight, kCostType cost = kCostType(1));
+  bool add_item(int index, int weight, kCostType cost = kCostType(1));
   void reset();
   void print();
 
   const vector<pair<shared_ptr<Item>, Position>>& best_pack() { return pack_[best_pack_w_]; }
   kCostType best_cost() { return dp_[best_pack_w_]; }
+  int free_space() { return kCapacity - best_pack_w_; }
 
 protected:
   virtual std::string representation();
@@ -35,26 +39,32 @@ private:
 
   vector<shared_ptr<Item>> items_;
 
-  kCostType dp_[kCapacity + 1];
-  kCostType next_dp_[kCapacity + 1];
-  vector<pair<shared_ptr<Item>, Position>> pack_[kCapacity + 1];
-  vector<pair<shared_ptr<Item>, Position>> next_pack_[kCapacity + 1];
-  bool changed_[kCapacity + 1];
+  vector<kCostType> dp_;
+  vector<kCostType> next_dp_;
+  vector<vector<pair<shared_ptr<Item>, Position>>> pack_;
+  vector<vector<pair<shared_ptr<Item>, Position>>> next_pack_;
+  vector<bool> changed_;
 
   int best_pack_w_;
 
+  const int kCapacity;
   const std::string class_name_ = "Knapsack";
 };
 
 
 
-template<int kCapacity, typename kCostType>
-void Knapsack<kCapacity, kCostType>::add_item(int index, int weight, kCostType cost) {
+template<typename kCostType>
+bool Knapsack<kCostType>::add_item(int index, int weight, kCostType cost) {
+  DBG("index: " << index << " weight: " << weight << " cost: " << cost)
+  if (weight > kCapacity) {
+    DBG("item weight: " << weight << " more than knapsack capacity: " << kCapacity)
+    return false;
+  }
   items_.push_back(make_shared<Item>(index, weight, cost));
   auto item = items_.back();
 
-  memcpy(next_dp_, dp_, sizeof(kCostType) * (kCapacity + 1));
-  memset(changed_, false, kCapacity + 1);
+  next_dp_ = dp_;
+  changed_.assign(kCapacity + 1, false);
 
   int current_best_w = 0;
   for (int i = 0; i < kCapacity - weight + 1; ++i) {
@@ -80,22 +90,26 @@ void Knapsack<kCapacity, kCostType>::add_item(int index, int weight, kCostType c
     }
   }
 
+  auto previous_best_pack_w = best_pack_w_;
   update_best_pack_w();
+
+  DBG("finished: best cost: " << best_cost() << " free space: " << free_space())
+  return previous_best_pack_w != best_pack_w_;
 }
 
-template<int kCapacity, typename kCostType>
-void Knapsack<kCapacity, kCostType>::reset() {
-  for (int i = 0; i < kCapacity + 1; ++i) {
-    dp_[i] = 0;
-    pack_[i].clear();
-  }
-  best_pack_w_ = 0;
+template<typename kCostType>
+void Knapsack<kCostType>::reset() {
+  dp_.assign(kCapacity + 1, 0);
+  next_dp_.assign(kCapacity + 1, 0);
+  pack_.assign(kCapacity + 1, {});
+  next_pack_.assign(kCapacity + 1, {});
   items_.clear();
   reset_internal();
+  best_pack_w_ = 0;
 }
 
-template<int kCapacity, typename kCostType>
-string Knapsack<kCapacity, kCostType>::representation() {
+template<typename kCostType>
+string Knapsack<kCostType>::representation() {
   int now = 0;
   string representation;
   for (const auto& [item, position] : pack_[best_pack_w_]) {
@@ -116,8 +130,8 @@ string Knapsack<kCapacity, kCostType>::representation() {
   return representation;
 }
 
-template<int kCapacity, typename kCostType>
-void Knapsack<kCapacity, kCostType>::print() {
+template<typename kCostType>
+void Knapsack<kCostType>::print() {
   std::string repr = representation();
   LOG("==========================")
   LOG("best cost: " << best_cost())
@@ -126,8 +140,8 @@ void Knapsack<kCapacity, kCostType>::print() {
   LOG("==========================")
 }
 
-template<int kCapacity, typename kCostType>
-struct Knapsack<kCapacity, kCostType>::Item {
+template<typename kCostType>
+struct Knapsack<kCostType>::Item {
   int index;
   int weight;
   kCostType cost;
@@ -139,8 +153,8 @@ struct Knapsack<kCapacity, kCostType>::Item {
     index(index), weight(weight), cost(cost) {}
 };
 
-template<int kCapacity, typename kCostType>
-struct Knapsack<kCapacity, kCostType>::Position {
+template<typename kCostType>
+struct Knapsack<kCostType>::Position {
   int l, r;
 
   Position():

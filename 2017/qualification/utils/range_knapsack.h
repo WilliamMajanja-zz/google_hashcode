@@ -6,6 +6,9 @@ public:
   using Position = typename Knapsack<kCostType>::Position;
   using Range = Position;
 
+  RangeKnapsack(int capacity):
+    Knapsack<kCostType>(capacity) {}
+
   bool add_range_item(int index, int weight, kCostType cost, int l, int r) {
     index_to_range_[index] = Range(l, r);
     return this->add_item(index, weight, cost);

@@ -12,7 +12,7 @@ public:
 
   void solve_internal(const Input& input, Output& output) override {
     LOG("started")
-    RangeKnapsack<100> rknap;
+    RangeKnapsack rknap(100);
     LOG("field inited")
 
     vector<int> perm(input.M);

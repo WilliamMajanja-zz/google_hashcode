@@ -2,7 +2,7 @@
 #include "../base/common.h"
 
 int main() {
-  Knapsack<10> knap;
+  Knapsack knap(10);
   knap.add_item(0, 7, 1);
   knap.add_item(1, 2, 1);
   knap.add_item(2, 2, 1);
@@ -13,7 +13,7 @@ int main() {
   knap.add_item(2, 9, 4);
   knap.print();
   
-  RangeKnapsack<10> rknap;
+  RangeKnapsack rknap(10);
   rknap.block_cell(0);
   rknap.add_range_item(0, 2, 1, 0, 3);
   rknap.add_range_item(1, 2, 1, 4, 6);

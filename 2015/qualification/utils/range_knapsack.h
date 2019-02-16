@@ -1,14 +1,17 @@
 #include "knapsack.h"
 
-template<int kCapacity, typename kCostType = int>
-class RangeKnapsack : public Knapsack<kCapacity, kCostType> {
+template<typename kCostType = int>
+class RangeKnapsack : public Knapsack<kCostType> {
 public:
-  using Position = typename Knapsack<kCapacity, kCostType>::Position;
+  using Position = typename Knapsack<kCostType>::Position;
   using Range = Position;
 
-  void add_range_item(int index, int weight, kCostType cost, int l, int r) {
+  RangeKnapsack(int capacity):
+    Knapsack<kCostType>(capacity) {}
+
+  bool add_range_item(int index, int weight, kCostType cost, int l, int r) {
     index_to_range_[index] = Range(l, r);
-    this->add_item(index, weight, cost);
+    return this->add_item(index, weight, cost);
   }
 
   void block_cell(int index) {
@@ -17,7 +20,7 @@ public:
 
 protected:
   std::string representation() override {
-    auto range_representation  = Knapsack<kCapacity, kCostType>::representation();
+    auto range_representation  = Knapsack<kCostType>::representation();
     for (auto blocked_cell : blocked_cells_) {
       ASSERT(
           range_representation[blocked_cell] == '.',
