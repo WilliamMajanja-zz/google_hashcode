@@ -8,4 +8,4 @@
 #define DBG(message)
 #endif
 
-#define ASSERT(condition, message) { if (!(condition)) { LOG(message); exit(0); } }
+#define ASSERT(condition, message) do { if (!(condition)) { LOG(message); exit(0); } } while (false);
