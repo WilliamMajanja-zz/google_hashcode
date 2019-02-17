@@ -257,6 +257,6 @@ inline void print_output(const Output& output, size_t score, const std::string& 
   LOG("output has been printed to file: " << fname)
 }
 
-double calc_dist(PT a, PT b) {
+double hypot(PT a, PT b) {
   return hypot(a.X - b.X, a.Y - b.Y);
 }

@@ -54,12 +54,12 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
             pos = shop_pos;
 
             load += input_copy.items[cmd.product_id] * cmd.number_of_items;
-            assert((load <= input_copy.max_load) && "exceed max load for drone");
+            ASSERT((load <= input_copy.max_load), "exceed max load for drone");
 
             products_cnt[cmd.product_id] += cmd.number_of_items;
 
             input_copy.shops[cmd.shop_id].number_of_items[cmd.product_id] -= cmd.number_of_items;
-            assert((input_copy.shops[cmd.shop_id].number_of_items[cmd.product_id] >= 0) && "can't load more than shop have");
+            ASSERT((input_copy.shops[cmd.shop_id].number_of_items[cmd.product_id] >= 0), "can't load more than shop have");
           } else if constexpr (std::is_same_v<T, UnloadCmd>) {
             const auto& shop = input_copy.shops[cmd.shop_id];
             const Position shop_pos = {shop.row, shop.col};
@@ -70,7 +70,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
             load -= input_copy.items[cmd.product_id] * cmd.number_of_items;
 
             products_cnt[cmd.product_id] -= cmd.number_of_items;
-            assert((products_cnt[cmd.product_id] >= 0) && "drone can't unload more than loaded");
+            ASSERT((products_cnt[cmd.product_id] >= 0), "drone can't unload more than loaded");
 
             input_copy.shops[cmd.shop_id].number_of_items[cmd.product_id] += cmd.number_of_items;
           } else if constexpr (std::is_same_v<T, DeliverCmd>) {
@@ -83,7 +83,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
             load -= input_copy.items[cmd.product_id] * cmd.number_of_items;
 
             products_cnt[cmd.product_id] -= cmd.number_of_items;
-            assert((products_cnt[cmd.product_id] >= 0) && "drone can't deliver more than loaded");
+            ASSERT((products_cnt[cmd.product_id] >= 0), "drone can't deliver more than loaded");
 
             order_info[cmd.order_id].max_turn = std::max(
               order_info[cmd.order_id].max_turn, total_turns);
@@ -93,7 +93,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
           }
         }, command);
     }
-    assert((total_turns <= input_copy.deadline) && "total number of turns for drone is more than input.deadline");
+    ASSERT((total_turns <= input_copy.deadline), "total number of turns for drone is more than input.deadline");
   }
 
   for (size_t i = 0; i < input_copy.orders.size(); ++i) {

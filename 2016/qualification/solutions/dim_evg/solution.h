@@ -48,32 +48,34 @@ public:
     vector<Drone> drones(input.n_drones, Drone(input.shops.front().row, input.shops.front().col));
 
     while (orders_to_process.size()) {
+      LOG("orders left: " << orders_to_process.size())
+      int best_order = -1;
       int best_time = input.deadline + 1;
       vector<Drone> best_drones;
       vector<Command> best_cmd;
       vector<unordered_map<int, int>> best_shop_to_item;
       for (auto order_ind : orders_to_process) {
-        LOG("process order: " << order_ind)
+        DBG("process order: " << order_ind)
         auto [paths, shop_to_item] = decompose(order_ind);
         auto resp = find_best_time(drones, paths);
         if (resp.time < best_time) {
+          best_order = order_ind;
           best_time = resp.time;
           best_drones = resp.drones;
           best_cmd = resp.commands;
           best_shop_to_item = move(shop_to_item);
         }
       }
-      LOG("best_time: " << best_time)
-      LOG("deadline: " << input.deadline)
-        exit(0);
       if (best_time > input.deadline) {
         break;
       }
+      LOG("best_time: " << best_time)
       drones = move(best_drones);
       shop_to_items_ = move(best_shop_to_item);
       for (auto& command : best_cmd) {
         output.commands.emplace_back(move(command));
       }
+      orders_to_process.erase(best_order);
     }
   }
 
@@ -143,11 +145,12 @@ private:
   }
 
   FindResponse find_best_time(vector<Drone> drones, const vector<Path>& paths) {
+    DBG("paths size: " << paths.size())
+    int result_time = 0;
     vector<Command> result_commands;
     for (int i = 0; i < paths.size(); ++i) {
-      int best_ind = 0;
-      Drone best_drone;
-      best_drone.t = input_.deadline + 1;
+      int best_ind = -1;
+      Drone best_drone(-1, -1, input_.deadline + 1);
       vector<Command> best_commands;
       vector<bool> used(drones.size());
       for (int j = 0; j < drones.size(); ++j) {
@@ -157,18 +160,18 @@ private:
         Drone drone = drones[j];
         vector<Command> commands;
 
-        int time_to_shop = hypot(mk(drone[j].row, drone[j].col), path[i].st);
+        int time_to_shop = hypot(drones[j].row - paths[i].st.X, drones[j].col - paths[i].st.Y) + 1.0;
 
-        int time_to_load = 0;
+        int time_to_load = drones[j].t;
         for (auto item : paths[i].items) {
-          commands.push_back(LoadCmd(j, path[i].shop, item, 1);
+          commands.push_back(LoadCmd(j, paths[i].shop, item, 1));
           time_to_load++;
         }
 
-        int time_to_deliver = hypot(path[i].st, path[i].fin);
+        int time_to_deliver = hypot(paths[i].st, paths[i].fin) + 1.0;
         int time_to_unload = 0;
         for (auto item : paths[i].items) {
-          commands.push_back(DeliverCmd(j, paths[i].order, item, 1);
+          commands.push_back(DeliverCmd(j, paths[i].order, item, 1));
           ++time_to_unload;
         }
         int time = time_to_load + time_to_deliver + time_to_shop + time_to_unload;
@@ -184,11 +187,16 @@ private:
         }
       }
       used[best_ind] = true;
+      result_time = max(result_time, best_drone.t);
       drones[best_ind] = best_drone;
-      for (auto& cmd : commands) {
-        best_commands.emplace_back(cmd);
+      for (auto& cmd : best_commands) {
+        result_commands.emplace_back(cmd);
       }
     }
+    FindResponse resp;
+    resp.time = result_time;
+    resp.drones = drones;
+    resp.commands = result_commands;
     return resp;
   }
 
