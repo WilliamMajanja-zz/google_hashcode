@@ -163,15 +163,19 @@ private:
         int time_to_shop = hypot(drones[j].row - paths[i].st.X, drones[j].col - paths[i].st.Y) + 1.0;
 
         int time_to_load = drones[j].t;
+        unordered_map<int, int> item_to_cnt;
         for (auto item : paths[i].items) {
-          commands.push_back(LoadCmd(j, paths[i].shop, item, 1));
+          item_to_cnt[item]++;
+        }
+        for (auto [item, cnt] : item_to_cnt) {
+          commands.push_back(LoadCmd(j, paths[i].shop, item, cnt));
           time_to_load++;
         }
 
         int time_to_deliver = hypot(paths[i].st, paths[i].fin) + 1.0;
         int time_to_unload = 0;
-        for (auto item : paths[i].items) {
-          commands.push_back(DeliverCmd(j, paths[i].order, item, 1));
+        for (auto [item, cnt] : item_to_cnt) {
+          commands.push_back(DeliverCmd(j, paths[i].order, item, cnt));
           ++time_to_unload;
         }
         int time = time_to_load + time_to_deliver + time_to_shop + time_to_unload;
