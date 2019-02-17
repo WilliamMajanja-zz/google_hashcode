@@ -1,4 +1,4 @@
 #!/bin/bash -e
 rm -rf logs/*
 g++ launcher.cpp -pthread --std=c++1z -O2
-(time ./a.out 0) 2>&1 | tee -a logs/run.log
+(time ./a.out 0 empty) 2>&1 | tee -a logs/empty.log
