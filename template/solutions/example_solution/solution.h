@@ -9,9 +9,7 @@ public:
       BaseSolution(std::forward<T>(args)...) {}
 
   void solve_internal(const Input& input, Output& output) override {
-    LOG("started")
     /* solve test here */
-    LOG("finished")
   }
 
 private:
