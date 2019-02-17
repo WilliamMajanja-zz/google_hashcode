@@ -31,7 +31,7 @@ public:
       int64_t res = std::numeric_limits<int64_t>::min();
       for (const auto product_id : needed) {
         int64_t closest_shop = std::numeric_limits<int64_t>::max();
-        for (const auto shop : input.shops) {
+        for (const auto& shop : input.shops) {
           const Position shop_pos = {shop.row, shop.col};
           if (shop.number_of_items[product_id] > 0) {
             closest_shop = std::min<int64_t>(closest_shop, get_distance(order_pos, shop_pos));
@@ -55,7 +55,7 @@ public:
 
     std::vector<DroneInfo> drones(input.n_drones);
     for (auto& drone : drones) {
-      drone.pos = {input.shops[0].row, input.shops[1].col};
+      drone.pos = {input.shops[0].row, input.shops[0].col};
     }
 
     for (const auto& order : orders) {
