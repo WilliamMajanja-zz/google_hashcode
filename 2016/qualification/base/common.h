@@ -17,6 +17,7 @@
 #include <unordered_set>
 #include <vector>
 #include <tuple>
+#include <variant>
 
 #define X first
 #define Y second
