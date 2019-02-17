@@ -21,7 +21,7 @@ public:
 protected:
   virtual void solve_internal(const Input& input, Output& output) = 0;
 
-  Input input_;
+  const Input& input_;
   Output output_;
 
 private:

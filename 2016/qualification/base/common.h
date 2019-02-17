@@ -16,19 +16,13 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include <variant>
 #include <tuple>
 
 #define X first
 #define Y second
 #define PT pair<int, int>
 #define mk make_pair
-
-#define R n_rows
-#define C n_cols
-#define D n_drones
-#define T deadline
-#define SZ max_load
+#define ll long long
 
 using namespace std;
 
