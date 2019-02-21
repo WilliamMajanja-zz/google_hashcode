@@ -136,8 +136,8 @@ template<typename kCostType>
 void Knapsack<kCostType>::print() {
   std::string repr = representation();
   LOG("==========================")
-  LOG("best cost: " << best_cost())
   LOG("best pack: " << repr)
+  LOG("cost: " << best_cost())
   LOG("unused space: " << free_space())
   LOG("==========================")
 }
