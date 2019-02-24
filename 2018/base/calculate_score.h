@@ -24,7 +24,7 @@ int distance(int x_0, int y_0, int x_1, int y_1) {
 }
 
 int calculate_score(const Input& input, const Output& output, bool enable_logging = true) {
-  // validate(input, output, enable_logging);
+  validate(input, output, enable_logging);
 
   int max_score = 0;
   for (const Ride& ride : input.rds) {
