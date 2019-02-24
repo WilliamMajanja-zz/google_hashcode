@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../base/solution.h"
+#include "../../utils/set_knapsack.h"
 
 class Solution : public BaseSolution {
 public:
@@ -9,7 +10,7 @@ public:
       BaseSolution(std::forward<T>(args)...) {}
 
   void solve_internal(const Input& input, Output& output) override {
-    /* solve test here */
+    SetKnapsack sknap(100, 10);
   }
 
 private:
