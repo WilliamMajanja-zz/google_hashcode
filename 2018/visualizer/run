@@ -1,0 +1,4 @@
+#!/bin/bash -e
+g++ launcher.cpp -I/usr/X11R6/include -L/usr/X11R6/lib -lX11 --std=c++1z
+echo complied
+./a.out
