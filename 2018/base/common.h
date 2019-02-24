@@ -79,3 +79,8 @@ inline void print_output(const Output& output, size_t score, const std::string& 
   }
   LOG("output has been printed to file: " << fname)
 }
+
+
+int dist(PT a, PT b) {
+  return abs(a.X - b.X) + abs(a.Y -  b.Y);
+}

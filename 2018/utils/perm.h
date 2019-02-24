@@ -4,7 +4,8 @@ public:
     for (int i = 0; i < size; ++i) {
       perm_.push_back(i);
     }
-    random_shuffle(perm_.begin(), perm_.end());
+    auto rng = std::default_random_engine {};
+    std::shuffle(std::begin(perm_), std::end(perm_), rng);
     unperm_.resize(size);
     for (int i = 0; i < size; ++i) {
       unperm_[perm_[i]] = i;
