@@ -24,7 +24,7 @@ int distance(int x_0, int y_0, int x_1, int y_1) {
 }
 
 int calculate_score(const Input& input, const Output& output, bool enable_logging = true) {
-  // validate(input, output, enable_logging);
+  validate(input, output, enable_logging);
 
   int max_score = 0;
   for (const Ride& ride : input.rds) {
@@ -74,8 +74,8 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
     score += score_for_veh;
   }
 
-  std::clog << "[" << class_name_ << "::" << __func__ << "]: " << "Max score (with all bonuses) = " << max_score << std::endl;
-  std::clog << "[" << class_name_ << "::" << __func__ << "]: " << "Relative score (1.0 is max) " << static_cast<double>(score) / max_score << std::endl;
+  std::cerr << "[" << class_name_ << "::" << __func__ << "]: " << "Max score (with all bonuses) = " << max_score << std::endl;
+  std::cerr << "[" << class_name_ << "::" << __func__ << "]: " << "Relative score (1.0 is max) " << static_cast<double>(score) / max_score << std::endl;
   
   return score;
 }
