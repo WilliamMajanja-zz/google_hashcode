@@ -24,7 +24,7 @@ int distance(int x_0, int y_0, int x_1, int y_1) {
 }
 
 int calculate_score(const Input& input, const Output& output, bool enable_logging = true) {
-  validate(input, output, enable_logging);
+  // validate(input, output, enable_logging);
 
   int score = 0;
   const auto& rides = output.rds;
@@ -33,6 +33,9 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
     int time = 0;
     const auto& path = rides[veh_id];
     int pos_x = 0, pos_y = 0;
+    int number_of_bonuses = 0;
+    int number_of_deliveries = 0;
+    int idleness = 0;
     for (int ride_id = 0; ride_id < path.size(); ++ride_id) {
       Ride ride = input.rds[path[ride_id]];
       bool in_time = false;
@@ -44,6 +47,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
 
       if (time <= ride.s) {
         in_time = true;
+        idleness += ride.s - time;
         time = ride.s;
       }
 
@@ -56,7 +60,10 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
       }
 
       score_for_veh += in_time * input.B + delivered * time_to_end;
+      number_of_bonuses += in_time;
+      number_of_deliveries += delivered;
     }
+    LOG("Score for vehicle #" << veh_id << " = " << score_for_veh << ", deliveries " << number_of_deliveries << ", with bonuses " << number_of_bonuses << ", idleness " << idleness);
     score += score_for_veh;
   }
   
