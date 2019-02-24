@@ -11,7 +11,7 @@ public:
       BaseSolution(std::forward<T>(args)...) {}
 
   void solve_internal(const Input& input, Output& output) override {
-    RideKnapsack sknap(input.T, 1, input.B);
+    RideKnapsack sknap(input.T, 5000, input.B);
 
     output.rds.resize(input.F);
     vector<pair<Ride, int>> qwe;
@@ -44,14 +44,9 @@ public:
         }
       }
       */
-      int cnt_to_break = 0;
       for (auto buf : buffer) {
         int rd = qwe[buf].Y;
-        if (sknap.add_ride(rd, input.rds[rd])) {
-          cnt_to_break = 0;
-        } else if (sknap.best_cost() > 30000) {
-          break;
-        }
+        sknap.add_ride(rd, input.rds[rd]);
       }
       sknap.print();
       LOG("veh: " << veh)
@@ -66,7 +61,7 @@ public:
         ++to_del;
       }
       */
-      LOG("to_del: " << to_del)
+      LOG("buffer size: " << buffer.size())
     }
   }
 

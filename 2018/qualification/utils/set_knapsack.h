@@ -7,93 +7,77 @@ public:
   struct Position;
   struct Pack;
 
-  SetKnapsack(int capacity, int packs_in_weight):
-    kCapacity(capacity), kPacksInWeight(packs_in_weight) {
-      DBG("init capacity: " << kCapacity << " packs_in_weight: " << kPacksInWeight)
-      reset();
-    }
+  SetKnapsack(int capacity, int max_best_packs):
+      kCapacity(capacity), kMaxBestPacks(max_best_packs) {
+    DBG("init capacity: " << kCapacity << " max_best_packs: " << kMaxBestPacks)
+    reset();
+  }
 
   bool add_item(int index);
   void reset();
   void print();
 
   int capacity() { return kCapacity; }
-  const Pack& best_pack() { return *dp_[best_pack_w_].begin(); }
+  const Pack& best_pack() { return *best_packs_.begin(); }
   kCostType best_cost() { return best_pack().cost; }
 
-  virtual int free_space() { return kCapacity - best_pack_w_; }
+  virtual int free_space() { return kCapacity - best_pack().last_weight; }
 
 protected:
   virtual std::string representation();
 
 private:
-  void update_best_pack_w() {
-    for (int i = 0; i < kCapacity + 1; ++i) {
-      if (dp_[i].size() && dp_[i].begin()->cost > dp_[best_pack_w_].begin()->cost) {
-        best_pack_w_ = i;
-      }
-    }
-  }
-
-  virtual optional<Pack> try_emplace(int item_index, const Pack& pack, int position) { return nullopt; }
+  virtual optional<Pack> try_emplace(int item_index, const Pack& pack) { return nullopt; }
   virtual void reset_internal() {}
 
-  vector<multiset<Pack>> dp_;
-  vector<multiset<Pack>> next_dp_;
-
-  int best_pack_w_;
+  set<Pack> best_packs_;
 
   const int kCapacity;
-  const int kPacksInWeight;
+  const int kMaxBestPacks;
   const std::string class_name_ = "SetKnapsack";
 };
 
 
-
 template<typename kCostType>
 bool SetKnapsack<kCostType>::add_item(int index) {
-  next_dp_ = dp_;
+  auto previous_best_pack_cost = best_cost();
 
-  for (int i = 0; i < kCapacity; ++i) {
-    for (const auto& pack : dp_[i]) {
-      DBG("process pack: last_weight: " << pack.last_weight <<
-          " cost: " << pack.cost << " i: " << i)
-      auto next_pack = try_emplace(index, pack, i);
-      if (next_pack) {
-        DBG("can emplace: last_weight: " << next_pack->last_weight <<
-            " cost: " << next_pack->cost << " cnt: " << next_pack->items.size())
-        int w = next_pack->last_weight;
-        next_dp_[w].insert(move(*next_pack));
-        while (next_dp_[w].size() > kPacksInWeight) {
-          next_dp_[w].erase(--next_dp_[w].end());
-        }
-      }
+  vector<Pack> packs_to_add;
+
+  for (const auto& pack : best_packs_) {
+    DBG("process pack: last_weight: " << pack.last_weight << " cost: " << pack.cost)
+    auto next_pack = try_emplace(index, pack);
+    if (next_pack) {
+      DBG("can emplace: last_weight: " << next_pack->last_weight <<
+          " cost: " << next_pack->cost << " cnt: " << next_pack->items.size())
+      packs_to_add.push_back(move(*next_pack));
     }
   }
 
-  dp_.swap(next_dp_);
+  for (auto& pack : packs_to_add) {
+    best_packs_.insert(move(pack));
+  }
 
-  auto previous_best_pack_w = best_pack_w_;
-  update_best_pack_w();
+  while (best_packs_.size() > kMaxBestPacks) {
+    best_packs_.erase(--best_packs_.end());
+  }
 
   DBG("finished: best cost: " << best_cost() << " free space: " << free_space())
-  return previous_best_pack_w != best_pack_w_;
+  return previous_best_pack_cost != best_cost();
 }
 
 template<typename kCostType>
 void SetKnapsack<kCostType>::reset() {
-  dp_.assign(kCapacity + 1, multiset<Pack>());
-  next_dp_.assign(kCapacity + 1, multiset<Pack>());
   reset_internal();
-  best_pack_w_ = 0;
-  dp_[0].insert(Pack());
+  best_packs_.clear();
+  best_packs_.insert(Pack());
 }
 
 template<typename kCostType>
 string SetKnapsack<kCostType>::representation() {
   int now = 0;
   string representation;
-  for (const auto& [index, position] : dp_[best_pack_w_].begin()->items) {
+  for (const auto& [index, position] : best_pack().items) {
     ASSERT(now <= position.l, "interval intersect previous: " << position.l << ' ' << position.r)
     while (now < position.l) {
       representation.push_back('.');
