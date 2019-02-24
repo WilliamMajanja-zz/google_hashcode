@@ -70,12 +70,14 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
       number_of_bonuses += in_time;
       number_of_deliveries += delivered;
     }
-    LOG("Score for vehicle #" << veh_id << " = " << score_for_veh << ", total deliveries " << path.size() << ", successful deliveries " << number_of_deliveries << ", with bonuses " << number_of_bonuses << ", idleness " << idleness);
+    LOG("Score for vehicle #" << veh_id << " = " << score_for_veh << ", total deliveries " << path.size() << ", successes " << number_of_deliveries << ", fails " << path.size() - number_of_deliveries << ", with bonuses " << number_of_bonuses << ", idleness " << idleness);
     score += score_for_veh;
   }
 
-  std::cerr << "[" << class_name_ << "::" << __func__ << "]: " << "Max score (with all bonuses) = " << max_score << std::endl;
-  std::cerr << "[" << class_name_ << "::" << __func__ << "]: " << "Relative score (1.0 is max) " << static_cast<double>(score) / max_score << std::endl;
+  enable_logging = true;
+  LOG("Max score (with all bonuses) = " << max_score);
+  LOG("Relative score (1.0 is max) " << static_cast<double>(score) / max_score);
+  enable_logging = false;
   
   return score;
 }

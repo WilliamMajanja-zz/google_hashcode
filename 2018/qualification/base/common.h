@@ -37,7 +37,7 @@ struct Ride {
 };
 
 struct Input {
-  int R, C; 
+  int R, C;
   int F, N;
   int B;
   int T;
