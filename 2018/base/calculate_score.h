@@ -74,8 +74,8 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
     score += score_for_veh;
   }
 
-  std::clog << "[" << class_name_ << "::" << __func__ << "]: " << "Max score (with all bonuses) = " << max_score << std::endl;
-  std::clog << "[" << class_name_ << "::" << __func__ << "]: " << "Relative score (1.0 is max) " << static_cast<double>(score) / max_score << std::endl;
+  std::cerr << "[" << class_name_ << "::" << __func__ << "]: " << "Max score (with all bonuses) = " << max_score << std::endl;
+  std::cerr << "[" << class_name_ << "::" << __func__ << "]: " << "Relative score (1.0 is max) " << static_cast<double>(score) / max_score << std::endl;
   
   return score;
 }
