@@ -11,7 +11,7 @@ public:
       BaseSolution(std::forward<T>(args)...) {}
 
   void solve_internal(const Input& input, Output& output) override {
-    RideKnapsack sknap(input.T, 5000, input.B);
+    RideKnapsack sknap(input.T, input.B);
 
     output.rds.resize(input.F);
     vector<pair<Ride, int>> qwe;
@@ -19,7 +19,7 @@ public:
       qwe.emplace_back(input.rds[i], i);
     }
     sort(qwe.begin(), qwe.end(), [](const pair<Ride, int>& lhs, const pair<Ride, int>& rhs) {
-        return dist(lhs.X.st, lhs.X.fin) > dist(rhs.X.st, rhs.X.fin);
+        return dist(lhs.X.st, lhs.X.fin) < dist(rhs.X.st, rhs.X.fin);
     });
     
     vector<int> asd(qwe.size());
@@ -31,9 +31,10 @@ public:
     int ind = 0;
 
     set<int> buffer;
-    for (int i = 0; i < qwe.size(); ++i) {
-      buffer.insert(i);
-    }
+    /*
+    buffer.insert(asd[4411]);
+    buffer.insert(asd[9520]);
+    */
     for (int veh = 0; veh < input.F; ++veh) {
       sknap.reset();
       /*
@@ -44,15 +45,19 @@ public:
         }
       }
       */
+      while (ind < qwe.size() && buffer.size() < 2000000) {
+        buffer.insert(ind++);
+      }
       for (auto buf : buffer) {
         int rd = qwe[buf].Y;
         sknap.add_ride(rd, input.rds[rd]);
+        //LOG("index: " << buf)
       }
       sknap.print();
       LOG("veh: " << veh)
-      for (const auto& [index, position] : sknap.best_pack().items) {
-        buffer.erase(asd[index]);
+      for (const auto& [index, item] : sknap.best_pack().items) {
         output.rds[veh].push_back(index);
+        buffer.erase(asd[index]);
       }
       int to_del = 0;
       /*
@@ -62,6 +67,10 @@ public:
       }
       */
       LOG("buffer size: " << buffer.size())
+      while (buffer.size() > 1900) {
+        buffer.erase(buffer.begin());
+      }
+      break;
     }
   }
 

@@ -18,6 +18,7 @@
 #include <vector>
 #include <tuple>
 #include <optional>
+#include <list>
 
 #define X first
 #define Y second
@@ -82,5 +83,5 @@ inline void print_output(const Output& output, size_t score, const std::string& 
 
 
 int dist(PT a, PT b) {
-  return abs(a.X - b.X) + abs(a.Y -  b.Y);
+  return abs(a.X - b.X) + abs(a.Y - b.Y);
 }
