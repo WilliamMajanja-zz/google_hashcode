@@ -63,7 +63,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
       number_of_bonuses += in_time;
       number_of_deliveries += delivered;
     }
-    LOG("Score for vehicle #" << veh_id << " = " << score_for_veh << ", deliveries " << number_of_deliveries << ", with bonuses " << number_of_bonuses << ", idleness " << idleness);
+    LOG("Score for vehicle #" << veh_id << " = " << score_for_veh << ", total deliveries " << path.size() << ", successful deliveries " << number_of_deliveries << ", with bonuses " << number_of_bonuses << ", idleness " << idleness);
     score += score_for_veh;
   }
   
