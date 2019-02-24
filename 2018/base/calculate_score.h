@@ -26,6 +26,13 @@ int distance(int x_0, int y_0, int x_1, int y_1) {
 int calculate_score(const Input& input, const Output& output, bool enable_logging = true) {
   validate(input, output, enable_logging);
 
+  int max_score = 0;
+  for (const Ride& ride : input.rds) {
+    max_score += distance(ride.st.first, ride.st.second,
+                          ride.fin.first, ride.fin.second);
+    max_score += input.B;
+  }
+
   int score = 0;
   const auto& rides = output.rds;
   for (int veh_id = 0; veh_id < rides.size(); ++veh_id) {
@@ -66,6 +73,8 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
     LOG("Score for vehicle #" << veh_id << " = " << score_for_veh << ", total deliveries " << path.size() << ", successful deliveries " << number_of_deliveries << ", with bonuses " << number_of_bonuses << ", idleness " << idleness);
     score += score_for_veh;
   }
+
+  LOG("Max score (with all bonuses) = " << max_score);
   
   return score;
 }
