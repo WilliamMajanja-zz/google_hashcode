@@ -47,7 +47,7 @@ inline Input read_input(const std::string& fname) {
 inline Output read_output(const std::string& fname) {
   ifstream in_f(fname);
   Output out;
-  /* read input here */
+  /* read output here */
   return out;
 }
 
