@@ -75,6 +75,7 @@ int calculate_score(const Input& input, const Output& output, bool enable_loggin
   }
 
   LOG("Max score (with all bonuses) = " << max_score);
+  LOG("Relative score (1.0 is max) " << static_cast<double>(score) / max_score);
   
   return score;
 }
