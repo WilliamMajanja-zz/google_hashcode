@@ -1,7 +1,21 @@
 #pragma once
 
 #include "../../base/solution.h"
-#include "../../utils/set_knapsack.h"
+
+using Pos = std::pair<int, int>;
+
+struct RideInfo {
+    Pos start_pos_;
+    Pos finish_pos_;
+
+    int min_start_time_;
+    int max_finish_time_;
+};
+
+struct CarInfo {
+    std::vector<int> rides_in_progress_;
+    std::vector<int> rides_finished_;
+};
 
 class Solution : public BaseSolution {
 public:
@@ -10,7 +24,7 @@ public:
       BaseSolution(std::forward<T>(args)...) {}
 
   void solve_internal(const Input& input, Output& output) override {
-    SetKnapsack sknap(100, 10);
+    /* solve test here */
   }
 
 private:
