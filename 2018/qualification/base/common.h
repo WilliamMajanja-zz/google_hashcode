@@ -19,6 +19,7 @@
 #include <tuple>
 #include <optional>
 #include <list>
+#include <deque>
 
 #define X first
 #define Y second

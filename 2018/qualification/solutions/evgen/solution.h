@@ -48,9 +48,17 @@ public:
       while (ind < qwe.size() && buffer.size() < 2000000) {
         buffer.insert(ind++);
       }
+      int cnt_to_break = 0;
       for (auto buf : buffer) {
         int rd = qwe[buf].Y;
-        sknap.add_ride(rd, input.rds[rd]);
+        if (!sknap.add_ride(rd, input.rds[rd])) {
+          ++cnt_to_break;
+        } else {
+          cnt_to_break = 0;
+        }
+        if (cnt_to_break == 50) {
+          break;
+        }
         //LOG("index: " << buf)
       }
       sknap.print();
@@ -67,10 +75,6 @@ public:
       }
       */
       LOG("buffer size: " << buffer.size())
-      while (buffer.size() > 1900) {
-        buffer.erase(buffer.begin());
-      }
-      break;
     }
   }
 

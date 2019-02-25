@@ -54,6 +54,7 @@ bool FastKnapsack<kCostType>::add_item(int index) {
 
   next_timer_++;
   vector<int> next_cells_way;
+  next_cells_way.reserve(cells_way_.size());
 
   for (int cell : cells_way_) {
     const auto& pack = cells_[cell];
@@ -84,8 +85,8 @@ bool FastKnapsack<kCostType>::add_item(int index) {
     }
   }
 
-  sort(next_cells_way.begin(), next_cells_way.end());
 
+  sort(next_cells_way.begin(), next_cells_way.end());
   DBG("next_cells_way size: " << next_cells_way.size())
 
   vector<int> final_cells_way;
