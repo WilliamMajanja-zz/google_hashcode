@@ -56,11 +56,12 @@ bool FastKnapsack<kCostType>::add_item(int index) {
     auto next_pack = try_emplace(index, pack_ptr);
     if (next_pack) {
       int next_free_cell = next_pack->next_free_cell;
+      kCostType next_cost = next_pack->cost;
       DBG("can emplace: next_free_cell: " << next_free_cell <<
-          " cost: " << next_pack->cost << " cnt: " << next_pack->size)
+          " cost: " << next_cost << " cnt: " << next_pack->size)
       if (
           !next_cells_.exists(next_free_cell) ||
-          next_pack->cost > next_cells_.get(next_free_cell)->cost
+          next_cost > next_cells_.get(next_free_cell)->cost
       ) {
         next_cells_.set(next_free_cell, make_shared<Pack>(move(*next_pack)));
       }
@@ -68,12 +69,13 @@ bool FastKnapsack<kCostType>::add_item(int index) {
   }
 
   for (auto cell_to_update : next_cells_.way()) {
+    kCostType cost_to_update = next_cells_.get(cell_to_update)->cost;
     if (
         !cells_.exists(cell_to_update) ||
-        next_cells_.get(cell_to_update)->cost > cells_.get(cell_to_update)->cost
+        cost_to_update > cells_.get(cell_to_update)->cost
     ) {
       cells_.set(cell_to_update, move(next_cells_.get(cell_to_update)));
-      if (cells_.get(cell_to_update)->cost > cells_.get(best_cell_)->cost) {
+      if (cost_to_update > cells_.get(best_cell_)->cost) {
         best_cell_ = cell_to_update;
       }
     }
