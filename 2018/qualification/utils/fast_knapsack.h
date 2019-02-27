@@ -99,15 +99,7 @@ string FastKnapsack<kCostType>::representation() {
   auto pack = best_pack();
   string representation;
   int now = 0;
-  vector<const Pack*> packs;
-  while (pack->previous_pack) {
-    packs.push_back(pack.get());
-    pack = *pack->previous_pack;
-  }
-  reverse(packs.begin(), packs.end());
-  for (const auto* pack : packs) {
-    int index = pack->item.X;
-    auto position = pack->item.Y;
+  for (const auto& [index, position] : best_pack()->create_vector()) {
     while (now < position.l) {
       representation.push_back('.');
       ++now;
@@ -150,11 +142,30 @@ template<typename kCostType>
 struct FastKnapsack<kCostType>::Pack {
   kCostType cost;
   int next_free_cell;
-  optional<shared_ptr<Pack>> previous_pack;
+  shared_ptr<Pack> previous_pack;
   pair<int, Position> item;
   int size;
 
   Pack():
-    cost(0), next_free_cell(0), previous_pack(nullopt), size(0) {}
+    cost(0), next_free_cell(0), previous_pack(nullptr), size(0) {}
+
+  auto create_vector() {
+    vector<pair<int, Position>> result;
+    result.push_back(item);
+    if (previous_pack) {
+      auto pack = previous_pack;
+      while (pack->previous_pack) {
+        result.push_back(pack->item);
+        pack = pack->previous_pack;
+      }
+    }
+    reverse(result.begin(), result.end());
+    return result;
+  }
+
+  void set_parent(const shared_ptr<Pack>& parent) {
+    size = parent->size + 1;
+    previous_pack = parent;
+  }
 };
 

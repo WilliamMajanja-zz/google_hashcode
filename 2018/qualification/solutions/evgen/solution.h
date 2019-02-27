@@ -31,10 +31,9 @@ public:
     int ind = 0;
 
     set<int> buffer;
-    /*
-    buffer.insert(asd[4411]);
-    buffer.insert(asd[9520]);
-    */
+    for (int i = 0; i < qwe.size(); ++i) {
+      buffer.insert(i);
+    }
     for (int veh = 0; veh < input.F; ++veh) {
       sknap.reset();
       /*
@@ -45,29 +44,29 @@ public:
         }
       }
       */
-      while (ind < qwe.size() && buffer.size() < 2000000) {
-        buffer.insert(ind++);
-      }
       int cnt_to_break = 0;
       for (auto buf : buffer) {
         int rd = qwe[buf].Y;
-        if (!sknap.add_ride(rd, input.rds[rd])) {
-          ++cnt_to_break;
-        } else {
-          cnt_to_break = 0;
-        }
-        if (cnt_to_break == 50) {
-          break;
+        sknap.add_ride(rd, input.rds[rd]);
+        if (buf % 1000 == 0) {
+          LOG("buf: " << buf << "/" << buffer.size())
         }
         //LOG("index: " << buf)
       }
       sknap.print();
       LOG("veh: " << veh)
-      for (const auto& [index, item] : sknap.best_pack().items) {
+      auto now = sknap.best_pack();
+      while (1) {
+        int index = now->item.X;
         output.rds[veh].push_back(index);
         buffer.erase(asd[index]);
+        now = *now->previous_pack;
+        if (!now->previous_pack) {
+          break;
+        }
       }
       int to_del = 0;
+      reverse(output.rds[veh].begin(), output.rds[veh].end());
       /*
       while (buffer.size() > 100) {
         buffer.erase(--buffer.end());
@@ -75,6 +74,7 @@ public:
       }
       */
       LOG("buffer size: " << buffer.size())
+      break;
     }
   }
 
