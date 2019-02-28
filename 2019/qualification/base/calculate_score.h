@@ -8,18 +8,18 @@ void validate(const Input& input, const Output& output, bool enable_logging = tr
 
   vector<char> used(input.ps.size());
   for (const auto& it : output.ids) {
-    Y_ASSERT(1 <= it.size() && it.size() <= 2,
+    ASSERT(1 <= it.size() && it.size() <= 2,
       "Incorrect number of photos on slide: " << it.size());
 
     for (int ph : it) {
-      Y_ASSERT(0 <= ph && ph < input.ps.size(), "Incorrect id of photo: " << ph);
-      Y_ASSERT(!used[ph], "Photo #" << ph << " used twice");
+      ASSERT(0 <= ph && ph < input.ps.size(), "Incorrect id of photo: " << ph);
+      ASSERT(!used[ph], "Photo #" << ph << " used twice");
       used[ph] = true;
 
       if (it.size() == 1) {
-        Y_ASSERT(input.ps[ph].type == 'H', "Invalid: vertical photo in slide with one photo");
+        ASSERT(input.ps[ph].type == 'H', "Invalid: vertical photo in slide with one photo");
       } else if (it.size() == 2) {
-        Y_ASSERT(input.ps[ph].type == 'V', "Invalid: horizontal photo in slide with two photos");
+        ASSERT(input.ps[ph].type == 'V', "Invalid: horizontal photo in slide with two photos");
       }
     }
   }
