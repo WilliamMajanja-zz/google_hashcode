@@ -35,6 +35,20 @@ set<string> get_tags(const Input& input, const vector<int>& ids) {
   return result;
 }
 
+long long score_for_pair(const Photo& left, const Photo& right) {
+  set<string> tags1(left.tags.begin(), left.tags.end());
+  set<string> tags2(right.tags.begin(), right.tags.end());
+  int both = 0;
+  for (const string& tag : tags1) {
+    if (tags2.count(tag)) {
+      ++both;
+    }
+  }
+  int only_in_1 = tags1.size() - both;
+  int only_in_2 = tags2.size() - both;
+  return min({both, only_in_1, only_in_2});
+}
+
 long long calculate_score(const Input& input, const Output& output, bool enable_logging = true) {
   validate(input, output, enable_logging);
 
