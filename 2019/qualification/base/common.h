@@ -249,7 +249,7 @@ int score_delta_if_swapped(const vector<vector<int>>& ids, int i, int j, Tools& 
 
 }
 
-void improve(const Input& input, Output& output) {
+void improve(const Input& input, Output& output, const int no_update_iters = 10000) {
   static std::random_device rd;
   static std::mt19937 g(rd());
 
@@ -259,10 +259,8 @@ void improve(const Input& input, Output& output) {
 
   vector<vector<int>>& ids = output.ids;
 
-  constexpr int NO_UPDATE = 1000;
-
   int n = ids.size();
-  for (int iter = 0, no_update = 0; no_update < NO_UPDATE; ++no_update, ++iter) {
+  for (int iter = 0, no_update = 0; no_update < no_update_iters; ++no_update, ++iter) {
     int i, j;
     do {
       i = g() % n;
