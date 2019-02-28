@@ -143,6 +143,7 @@ public:
     std::random_device rd;
     std::mt19937 g(rd());
 
+    LOG("kek")
     const auto& photos = input.ps;
     const int n = photos.size();
 
@@ -150,6 +151,7 @@ public:
     const int m = photo_to_num.size();
     ASSERT(m <= TAGS, "Actual number of unique tags is " << m);
 
+    LOG("kek")
     vector<bs> tags(n);
     vector<char> vert(n, false);
     for (int i = 0; i < n; ++i) {
@@ -180,9 +182,6 @@ public:
 
     LOG("Start swapping intervals.");
     for (int iter = 0, no_update = 0; no_update < 100000; ++no_update, ++iter) {
-      if (iter % 10000 == 0) {
-        LOG("Iteration #" << iter << ". Score = " << max_score);
-      }
       int i, j;
       do {
         i = g() % best.size();
@@ -197,7 +196,16 @@ public:
         max_score += improve;
         static int updates = 0;
         if (++updates % 10000 == 0) {
+          output.ids.resize(0);
+          for (const auto& it : best) {
+            if (it.second == -1) {
+              output.ids.push_back({it.first});
+            } else {
+              output.ids.push_back({it.first, it.second});
+            }
+          }
           LOG("Score updated. Iteration " << iter << ". New score = " << max_score << ". +" << improve);
+          print_output(output, max_score, "../../output/e_shiny_selfies/");
         }
         no_update = 0;
       }

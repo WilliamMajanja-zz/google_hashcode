@@ -1,0 +1,4 @@
+#!/bin/bash -e
+rm -rf logs/*
+g++ launcher.cpp -pthread --std=c++1z -O2
+(time ./a.out 1388.ans c_memorable_moments) 2>&1 | tee -a logs/a_example.log
