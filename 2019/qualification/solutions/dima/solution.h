@@ -159,6 +159,7 @@ public:
     std::random_device rd;
     std::mt19937 g(rd());
 
+    LOG("kek")
     const auto& photos = input.ps;
     const int n = photos.size();
 
@@ -166,6 +167,7 @@ public:
     const int m = photo_to_num.size();
     ASSERT(m <= TAGS, "Actual number of unique tags is " << m);
 
+    LOG("kek")
     vector<bs> tags(n);
     vector<char> vert(n, false);
     for (int i = 0; i < n; ++i) {

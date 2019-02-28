@@ -4,6 +4,7 @@
 #include "log.h"
 #include <algorithm>
 #include <atomic>
+#include <bitset>
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -72,6 +73,8 @@ inline Output read_output(const std::string& fname) {
   Output out;
   int n;
   in_f >> n;
+  string str;
+  getline(in_f, str);
   for (int i = 0; i < n; ++i) {
     out.ids.emplace_back();
     string str;
