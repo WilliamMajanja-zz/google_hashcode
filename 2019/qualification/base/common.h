@@ -29,18 +29,35 @@ using namespace std;
 string class_name_;
 bool enable_logging = true;
 
+struct Photo {
+  int H, V;
+  vector<string> tags;
+};
+
 struct Input {
-  /* input structure here */
+  vector<Photo> ps;
 };
 
 struct Output {
-  /* output structure here */
+  vector<vector<int>> ids;
 };
 
 inline Input read_input(const std::string& fname) {
   ifstream in_f(fname);
   Input in;
-  /* read input here */
+  int n;
+  in_f >> n;
+  in.ps.resize(n);
+  for (auto& p : in.ps) {
+    in_f >> p.H >> p.V;
+    int m;
+    cin >> m;
+    for (int i = 0; i < m; ++i) {
+      string t;
+      in_f >> t;
+      p.tags.push_back(t);
+    }
+  }
   return in;
 }
 
@@ -54,6 +71,12 @@ inline Output read_output(const std::string& fname) {
 inline void print_output(const Output& output, size_t score, const std::string& fpath = "./") {
   auto fname = fpath + to_string(score) + ".ans";
   fstream out_f(fname, fstream::out);
-  /* print output here */
+  out_f << output.ids.size() << '\n';
+  for (const auto& ids : output.ids) {
+    for (int id : ids) {
+      out_f << id << ' ';
+    }
+    out_f << '\n';
+  }
   LOG("output has been printed to file: " << fname)
 }
