@@ -7,13 +7,14 @@ void validate(const Input& input, const Output& output, bool enable_logging = tr
     "Incorrect number of slides in output: " << output.ids.size());
 
   vector<char> used(input.ps.size());
+  int pos = 0;
   for (const auto& it : output.ids) {
     ASSERT(1 <= it.size() && it.size() <= 2,
-      "Incorrect number of photos on slide: " << it.size());
+      "Incorrect number of photos on slide: " << it.size() << " at pos " << pos);
 
     for (int ph : it) {
       ASSERT(0 <= ph && ph < input.ps.size(), "Incorrect id of photo: " << ph);
-      ASSERT(!used[ph], "Photo #" << ph << " used twice");
+      ASSERT(!used[ph], "Photo #" << ph << " at pos " << pos <<  " used twice");
       used[ph] = true;
 
       if (it.size() == 1) {
@@ -22,6 +23,7 @@ void validate(const Input& input, const Output& output, bool enable_logging = tr
         ASSERT(input.ps[ph].type == 'V', "Invalid: horizontal photo in slide with two photos");
       }
     }
+    ++pos;
   }
 
   LOG("output format valid")
