@@ -139,6 +139,22 @@ public:
     return new_score - cur_score;
   }
 
+  int score_delta_if_swapped(vector<pair<int, int>>& sol, int i, int it, int j, int jt, const vector<bs>& tags) const { 
+    int cur_score = (i == 0 ? 0 : calc_score_two(i - 1, i, sol, tags)) + (i + 1 == sol.size() ? 0 : calc_score_two(i, i + 1, sol, tags))
+      + (j == 0 ? 0 : calc_score_two(j - 1, j, sol, tags)) + (j + 1 == sol.size() ? 0 : calc_score_two(j, j + 1, sol, tags));
+
+    auto& val_i = it == 0 ? sol[i].first : sol[i].second;
+    auto& val_j = jt == 0 ? sol[j].first : sol[j].second;
+    swap(val_i, val_j);
+
+    int new_score = (i == 0 ? 0 : calc_score_two(i - 1, i, sol, tags)) + (i + 1 == sol.size() ? 0 : calc_score_two(i, i + 1, sol, tags))
+      + (j == 0 ? 0 : calc_score_two(j - 1, j, sol, tags)) + (j + 1 == sol.size() ? 0 : calc_score_two(j, j + 1, sol, tags));
+
+    swap(val_i, val_j);
+
+    return new_score - cur_score;
+  }
+
   void solve_internal(const Input& input, Output& output) override {
     std::random_device rd;
     std::mt19937 g(rd());
@@ -178,8 +194,38 @@ public:
     }
     LOG("Done shuffling. Max score = " << max_score);
 
+    LOG("Start swapping in slides.");
+    int last_score = max_score;
+    for (int iter = 0, no_update = 0; iter < 10000000; ++no_update, ++iter) {
+      int i, j;
+      do {
+        i = g() % best.size();
+        j = g() % best.size();
+      } while (i == j);
+      if (i > j) swap(i, j);
+
+      int it = g() % 2;
+      int jt = g() % 2;
+
+      const int improve = score_delta_if_swapped(best, i, it, j, jt, tags);
+
+      if (improve > 0) {
+        auto& val_i = it == 0 ? best[i].first : best[i].second;
+        auto& val_j = jt == 0 ? best[j].first : best[j].second;
+        swap(val_i, val_j);
+        max_score += improve;
+        static int updates = 0;
+        if (++updates % 10000 == 0) {
+          LOG("Score updated. Iteration " << iter << ". New score = " << max_score << ". +" << max_score - last_score);
+          last_score = max_score;
+        }
+        no_update = 0;
+      }
+    }
+    LOG("Done swapping. Max score = " << max_score);
+
     LOG("Start swapping intervals.");
-    for (int iter = 0, no_update = 0; no_update < 100000; ++no_update, ++iter) {
+    for (int iter = 0, no_update = 0; no_update < 100000000; ++no_update, ++iter) {
       if (iter % 10000 == 0) {
         LOG("Iteration #" << iter << ". Score = " << max_score);
       }
@@ -196,13 +242,15 @@ public:
         reverse(best.begin() + i, best.begin() + j + 1);
         max_score += improve;
         static int updates = 0;
-        if (++updates % 10000 == 0) {
-          LOG("Score updated. Iteration " << iter << ". New score = " << max_score << ". +" << improve);
+        if (++updates % 100000 == 0) {
+          LOG("Score updated. Iteration " << iter << ". New score = " << max_score << ". +" << max_score - last_score);
+          last_score = max_score;
         }
         no_update = 0;
       }
     }
     LOG("Done swapping intervals. Max score = " << max_score);
+
 
     for (const auto& it : best) {
       if (it.second == -1) {
