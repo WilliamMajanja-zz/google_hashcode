@@ -30,7 +30,7 @@ string class_name_;
 bool enable_logging = true;
 
 struct Photo {
-  int H, V;
+  char type;
   vector<string> tags;
 };
 
@@ -47,11 +47,12 @@ inline Input read_input(const std::string& fname) {
   Input in;
   int n;
   in_f >> n;
+  LOG("N: " << n)
   in.ps.resize(n);
   for (auto& p : in.ps) {
-    in_f >> p.H >> p.V;
+    in_f >> p.type;
     int m;
-    cin >> m;
+    in_f >> m;
     for (int i = 0; i < m; ++i) {
       string t;
       in_f >> t;
