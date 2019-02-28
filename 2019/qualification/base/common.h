@@ -260,6 +260,7 @@ void improve(const Input& input, Output& output, const int no_update_iters = 100
   vector<vector<int>>& ids = output.ids;
 
   int n = ids.size();
+  int last_score = max_score;
   for (int iter = 0, no_update = 0; no_update < no_update_iters; ++no_update, ++iter) {
     int i, j;
     do {
@@ -275,7 +276,8 @@ void improve(const Input& input, Output& output, const int no_update_iters = 100
       max_score += improve;
       static int updates = 0;
       if (++updates % 10000 == 0) {
-        LOG("Score updated. Iteration " << iter << ". New score = " << max_score << ". +" << improve);
+        LOG("Score updated. Iteration " << iter << ". New score = " << max_score << ". +" << max_score - last_score);
+        last_score = max_score;
       }
       no_update = 0;
     }
