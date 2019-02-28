@@ -1,0 +1,4 @@
+#!/bin/bash -e
+rm -rf logs/*
+g++ launcher.cpp -pthread --std=c++1z -DDEBUG -O2
+(time ./a.out 0 a_example) 2>&1 | tee -a logs/a_example_debug.log
