@@ -32,10 +32,12 @@ bool enable_logging = true;
 struct Photo {
   char type;
   vector<string> tags;
+  vector<int> idx;
 };
 
 struct Input {
   vector<Photo> ps;
+  int sed;
 };
 
 struct Output {
@@ -49,6 +51,9 @@ inline Input read_input(const std::string& fname) {
   in_f >> n;
   LOG("N: " << n)
   in.ps.resize(n);
+  for (int i = 0; i < n; ++i) {
+    in.ps[i].idx.push_back(i);
+  }
   for (auto& p : in.ps) {
     in_f >> p.type;
     int m;
@@ -65,7 +70,18 @@ inline Input read_input(const std::string& fname) {
 inline Output read_output(const std::string& fname) {
   ifstream in_f(fname);
   Output out;
-  /* read output here */
+  int n;
+  in_f >> n;
+  for (int i = 0; i < n; ++i) {
+    out.ids.emplace_back();
+    string str;
+    getline(in_f, str);
+    stringstream st(str);
+    int x;
+    while (st >> x) {
+      out.ids.back().push_back(x);
+    }
+  }
   return out;
 }
 
