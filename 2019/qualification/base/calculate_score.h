@@ -7,7 +7,7 @@ void validate(const Input& input, const Output& output, bool enable_logging = tr
     "Incorrect number of slides in output: " << output.ids.size());
 
   vector<char> used(input.ps.size());
-  for (const auto& it : output.ids.size()) {
+  for (const auto& it : output.ids) {
     Y_ASSERT(1 <= it.size() && it.size() <= 2,
       "Incorrect number of photos on slide: " << it.size());
 
