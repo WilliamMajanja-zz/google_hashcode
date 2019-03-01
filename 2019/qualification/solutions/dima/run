@@ -1,0 +1,4 @@
+#!/bin/bash -e
+rm -rf logs/*
+g++ launcher.cpp -pthread --std=c++1z -O3
+(time ./a.out 0 e_shiny_selfies) 2>&1 | tee -a logs/e_shiny_selfies.log
